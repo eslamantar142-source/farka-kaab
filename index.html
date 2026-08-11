@@ -1,0 +1,3432 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فركة كعب</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1117;--surf:#1a1d27;--surf2:#222636;--bord:rgba(255,255,255,0.08);--acc:#f5a623;--txt:#e8e9f0;--txt2:#8b8fa8;--green:#2ecc71;--amber:#f39c12;--red:#e74c3c;--blue:#3498db;--purple:#9b59b6;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:'Cairo',sans-serif;min-height:100vh;font-size:14px;}
+.hdr{background:var(--surf);border-bottom:1px solid var(--bord);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:8px;}
+.logo{font-size:17px;font-weight:700;color:var(--acc);}
+.logo small{color:var(--txt2);font-weight:400;font-size:11px;margin-right:6px;}
+.tabs{display:flex;gap:3px;background:var(--surf2);border-radius:8px;padding:3px;flex-wrap:wrap;}
+.tab{padding:5px 10px;border-radius:6px;border:none;background:none;color:var(--txt2);cursor:pointer;font-family:'Cairo',sans-serif;font-size:12px;font-weight:500;}
+.tab.active{background:var(--acc);color:#000;font-weight:700;}
+.main{padding:14px;max-width:1100px;margin:0 auto;}
+.page{display:none;}.page.active{display:block;}
+.btn{padding:6px 14px;border-radius:7px;border:1px solid var(--bord);background:var(--surf2);color:var(--txt);cursor:pointer;font-family:'Cairo',sans-serif;font-size:13px;font-weight:500;}
+.btn:hover{opacity:.85;}
+.btn-acc{background:var(--acc);color:#000;border-color:var(--acc);font-weight:700;}
+.btn-green{background:rgba(46,204,113,.15);color:var(--green);border-color:rgba(46,204,113,.3);}
+.btn-red{background:rgba(231,76,60,.1);color:var(--red);border-color:rgba(231,76,60,.3);}
+.btn-blue{background:rgba(52,152,219,.15);color:var(--blue);border-color:rgba(52,152,219,.3);}
+.btn-sm{padding:3px 9px;font-size:11px;border-radius:5px;}
+input,select,textarea{padding:6px 10px;font-size:13px;background:var(--surf2);border:1px solid var(--bord);border-radius:7px;color:var(--txt);font-family:'Cairo',sans-serif;outline:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);}
+input::placeholder,textarea::placeholder{color:var(--txt2);}
+select option{background:var(--surf2);}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.stat{background:var(--surf);border:1px solid var(--bord);border-radius:11px;padding:11px 13px;}
+.stat .num{font-size:21px;font-weight:700;color:var(--acc);}
+.stat .lbl{font-size:11px;color:var(--txt2);margin-top:1px;}
+.twrap{background:var(--surf);border:1px solid var(--bord);border-radius:12px;overflow:hidden;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px;}
+th{padding:8px 9px;text-align:right;font-weight:600;color:var(--txt2);font-size:11px;background:var(--surf2);border-bottom:1px solid var(--bord);white-space:nowrap;}
+td{padding:7px 9px;border-bottom:1px solid var(--bord);color:var(--txt);text-align:right;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+.empty{text-align:center;padding:30px;color:var(--txt2);}
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.b-vip{background:rgba(155,89,182,.2);color:#c39bd3;}
+.b-good{background:rgba(46,204,113,.15);color:var(--green);}
+.b-ok{background:rgba(52,152,219,.15);color:var(--blue);}
+.b-weak{background:rgba(243,156,18,.15);color:var(--amber);}
+.b-lost{background:rgba(231,76,60,.15);color:var(--red);}
+.b-gray{background:rgba(99,110,130,.2);color:#8b8fa8;}
+.cat-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600;}
+.cat-فرد{background:rgba(52,152,219,.15);color:var(--blue);}
+.cat-مطعم{background:rgba(231,76,60,.15);color:var(--red);}
+.cat-أونلاين{background:rgba(155,89,182,.15);color:var(--purple);}
+.cat-شواية{background:rgba(243,156,18,.15);color:var(--amber);}
+.cat-محل{background:rgba(46,204,113,.15);color:var(--green);}
+.cat-معمل{background:rgba(245,166,35,.1);color:#f5a623;}
+.cat-صيدلية{background:rgba(93,173,226,.15);color:#5dade2;}
+.card{background:var(--surf);border:1px solid var(--bord);border-radius:12px;padding:14px;margin-bottom:14px;}
+.rider-reg-card{background:var(--surf2);border:1px solid var(--bord);border-radius:10px;padding:10px;}
+.card-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px;color:var(--txt);}
+.card-title::before{content:'';display:block;width:3px;height:15px;background:var(--acc);border-radius:2px;}
+.frow{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap;align-items:center;}
+.frow input{flex:1;min-width:130px;max-width:200px;}
+.frow select{min-width:110px;}
+
+/* Cells grid */
+.cells-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.cell-wrap{position:relative;background:var(--surf2);border:1.5px solid var(--bord);border-radius:9px;padding:8px;}
+.cell-wrap.selected{border-color:var(--acc);}
+.cell-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.cell-num{font-size:10px;color:var(--txt2);}
+.cell-chk{width:16px;height:16px;cursor:pointer;accent-color:var(--acc);}
+.cell-wrap textarea{width:100%;height:90px;resize:none;font-size:11px;padding:5px;border-radius:5px;background:var(--bg);border:none;}
+.cell-wrap textarea:focus{outline:1px solid var(--acc);}
+
+/* Order cards */
+.orders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:14px;}
+.ocard{background:var(--surf);border:1.5px solid var(--bord);border-radius:11px;padding:11px;}
+.ocard.is-new{border-color:rgba(46,204,113,.4);}
+.ocard.is-ret{border-color:rgba(245,166,35,.4);}
+.ocard.has-fee-alert{border-color:rgba(231,76,60,.65);box-shadow:0 0 0 1px rgba(231,76,60,.2);}
+.fee-alert-badge{display:inline-block;margin-top:4px;background:rgba(231,76,60,.18);color:#ff8a75;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;}
+.ocard-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.ocard-phone{font-size:14px;font-weight:700;direction:ltr;text-align:right;margin-bottom:4px;}
+.ocard-text{font-size:11px;color:var(--txt2);background:var(--surf2);border-radius:6px;padding:6px 8px;margin-bottom:7px;max-height:65px;overflow-y:auto;line-height:1.5;}
+.cust-hist{background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.2);border-radius:7px;padding:6px 8px;margin-bottom:7px;font-size:11px;}
+.ocard-fields{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px;}
+.ocard-fields input,.ocard-fields select{font-size:11px;padding:4px 7px;}
+.ocard-footer{display:flex;gap:5px;justify-content:flex-end;}
+
+/* Modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;}
+.modal.open{display:flex;}
+.modal-box{background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:20px;width:92%;max-width:560px;max-height:88vh;overflow-y:auto;}
+.modal-title{font-size:15px;font-weight:700;color:var(--acc);margin-bottom:14px;}
+.comp-badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600;background:rgba(231,76,60,.15);color:var(--red);}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:9px 22px;border-radius:9px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+@media(max-width:700px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .cells-grid{grid-template-columns:repeat(2,1fr);}
+  .hdr{flex-direction:column;}
+}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<div id="login-gate" style="position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:24px;width:100%;max-width:360px;">
+    <div style="font-size:19px;font-weight:700;color:var(--acc);margin-bottom:4px;text-align:center;">فركة كعب</div>
+    <div style="font-size:12px;color:var(--txt2);text-align:center;margin-bottom:18px;">سجل دخول عشان تفتح البرنامج</div>
+    <input type="email" id="login-email" placeholder="الإيميل" style="width:100%;margin-bottom:8px;" autocomplete="username">
+    <input type="password" id="login-pass" placeholder="الباسورد" style="width:100%;margin-bottom:12px;" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin();">
+    <button class="btn btn-acc" style="width:100%;" onclick="doLogin()">دخول</button>
+    <div id="login-err" style="color:var(--red);font-size:12px;margin-top:10px;text-align:center;"></div>
+    <div id="login-loading" style="color:var(--txt2);font-size:12px;margin-top:10px;text-align:center;display:none;">...بيتم التحقق</div>
+  </div>
+</div>
+<div class="hdr" id="app-hdr" style="display:none;">
+  <div class="logo">فركة كعب <small>نظام الأوردرات</small></div>
+  <div class="tabs">
+    <button class="tab active" onclick="showPage('dashboard',this)">🏠 الرئيسية</button>
+    <button class="tab" onclick="showPage('incoming',this)">الوارد</button>
+    <button class="tab" onclick="showPage('customers',this)">الزبائن</button>
+    <button class="tab" onclick="showPage('riders',this)">المناديب</button>
+    <button class="tab" onclick="showPage('settlements',this)">تصفية المناديب</button>
+    <button class="tab" onclick="showPage('history',this)">السجل</button>
+    <button class="tab" onclick="showPage('complaints',this)">الشكاوى</button>
+    <button class="tab" onclick="showPage('settings',this)">الإعدادات</button>
+    <button class="tab" onclick="showPage('backup',this)">البيانات</button>
+    <button class="tab" onclick="showPage('alerts',this)">التنبيهات 🔔</button>
+    <button class="tab" onclick="showPage('lost',this)" id="lost-tab">المنقطعون 🔴</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span id="sync-status" style="font-size:11px;color:var(--txt2);white-space:nowrap;">☁️ ...</span>
+    <button class="btn btn-sm" onclick="doLogout()">خروج</button>
+  </div>
+</div>
+
+<div id="backup-alert" style="display:none;background:rgba(231,76,60,.15);border-bottom:2px solid var(--red);padding:10px 16px;text-align:center;font-size:13px;color:var(--red);">
+  ⚠️ معندكش نسخة احتياطية من أمبارح! 
+  <button onclick="exportData();document.getElementById('backup-alert').style.display='none';" style="background:var(--red);color:#fff;border:none;border-radius:6px;padding:4px 12px;font-family:Cairo,sans-serif;font-size:12px;cursor:pointer;margin-right:10px;">حملها دلوقتي</button>
+  <button onclick="document.getElementById('backup-alert').style.display='none';" style="background:none;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:4px 10px;font-family:Cairo,sans-serif;font-size:12px;cursor:pointer;">تجاهل</button>
+</div>
+<div class="main" id="app-main" style="display:none;">
+
+<!-- ===== الرئيسية ===== -->
+<div class="page active" id="page-dashboard">
+  <div class="stats" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat"><div class="num" id="db-today">0</div><div class="lbl">أوردرات النهارده</div></div>
+    <div class="stat"><div class="num" id="db-month">0</div><div class="lbl" id="db-month-lbl">أوردرات الشهر</div></div>
+    <div class="stat"><div class="num" id="db-year">0</div><div class="lbl" id="db-year-lbl">أوردرات السنة</div></div>
+    <div class="stat"><div class="num" id="db-yest">0</div><div class="lbl">أوردرات امبارح</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🗓️ يوم معين</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;">نقّل بين الأيام بسهولة وشوف كل أوردرات اليوم ده وعدده وإجمالي التوصيل بتاعه</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+      <button class="btn btn-sm" onclick="shiftDayPick(-1)">◀ يوم قبل</button>
+      <input type="date" id="db-day-pick" onchange="renderDayPick()">
+      <button class="btn btn-sm" onclick="shiftDayPick(1)">يوم بعد ▶</button>
+      <button class="btn btn-sm btn-acc" onclick="document.getElementById('db-day-pick').value=today();renderDayPick();">النهارده</button>
+    </div>
+    <div id="db-day-result"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📅 أوردرات فترة معينة</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+      <span style="font-size:12px;color:var(--txt2);">من</span>
+      <input type="date" id="db-range-from" onchange="renderDashboard()" style="max-width:150px;">
+      <span style="font-size:12px;color:var(--txt2);">لـ</span>
+      <input type="date" id="db-range-to" onchange="renderDashboard()" style="max-width:150px;">
+      <button class="btn btn-sm" onclick="setRangeQuick(7)">آخر أسبوع</button>
+      <button class="btn btn-sm" onclick="setRangeQuick(30)">آخر شهر</button>
+      <button class="btn btn-sm" onclick="setRangeQuick(90)">آخر 3 شهور</button>
+      <button class="btn btn-sm" onclick="document.getElementById('db-range-from').value='';document.getElementById('db-range-to').value='';renderDashboard();" style="background:rgba(231,76,60,.1);color:var(--red);border-color:rgba(231,76,60,.3);">&#x2715; مسح</button>
+    </div>
+    <div id="db-range-result"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+    <div class="card" style="margin:0;">
+      <div class="card-title">🔴 زبائن محتاجة متابعة</div>
+      <div id="db-lost-summary"></div>
+    </div>
+    <div class="card" style="margin:0;">
+      <div class="card-title">🏆 أكتر المناديب النهارده</div>
+      <div id="db-top-riders"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 آخر 6 شهور</div>
+    <div id="db-months-chart"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
+    <div class="card" style="margin:0;">
+      <div class="card-title">🍽️ أكتر الأماكن طلباً</div>
+      <select id="db-places-period" onchange="renderDashboard()" style="margin-bottom:10px;width:100%;">
+        <option value="month">الشهر الحالي</option>
+        <option value="all">كل الفترات</option>
+        <option value="week">آخر أسبوع</option>
+      </select>
+      <div id="db-top-places"></div>
+    </div>
+    <div class="card" style="margin:0;">
+      <div class="card-title">📍 أكتر المناطق طلباً</div>
+      <select id="db-areas-period" onchange="renderDashboard()" style="margin-bottom:10px;width:100%;">
+        <option value="month">الشهر الحالي</option>
+        <option value="all">كل الفترات</option>
+        <option value="week">آخر أسبوع</option>
+      </select>
+      <div id="db-top-areas"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⏰ أوقات الذروة</div>
+    <select id="db-peak-period" onchange="renderDashboard()" style="margin-bottom:10px;max-width:180px;">
+      <option value="30">آخر شهر</option>
+      <option value="7">آخر أسبوع</option>
+      <option value="90">آخر 3 شهور</option>
+      <option value="all">كل الفترات</option>
+    </select>
+    <div id="db-peak-hours"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👑 أكتر الزبائن طلباً</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+      <select id="db-customers-period" onchange="renderDashboard()" style="max-width:170px;">
+        <option value="month">الشهر الحالي</option>
+        <option value="week">آخر أسبوع</option>
+        <option value="30">آخر شهر</option>
+        <option value="60">آخر شهرين</option>
+        <option value="90">آخر 3 شهور</option>
+        <option value="180">آخر 6 شهور</option>
+        <option value="365">آخر سنة</option>
+        <option value="730">آخر سنتين</option>
+        <option value="all">كل الفترات</option>
+        <option value="custom">تاريخ محدد</option>
+      </select>
+      <select id="db-customers-limit" onchange="renderDashboard()" style="max-width:140px;">
+        <option value="50">أول 50</option>
+        <option value="100">أول 100</option>
+        <option value="500">أول 500</option>
+        <option value="1000">أول 1000</option>
+        <option value="99999">كل الأرقام</option>
+      </select>
+      <span style="font-size:11px;color:var(--txt2);">من</span>
+      <input type="date" id="db-cust-from" onchange="renderDashboard()" style="max-width:145px;">
+      <span style="font-size:11px;color:var(--txt2);">لـ</span>
+      <input type="date" id="db-cust-to" onchange="renderDashboard()" style="max-width:145px;">
+      <button class="btn btn-sm" onclick="document.getElementById('db-cust-from').value='';document.getElementById('db-cust-to').value='';renderDashboard();" style="background:rgba(231,76,60,.1);color:var(--red);border-color:rgba(231,76,60,.3);">&#x2715; مسح التاريخ</button>
+      <button class="btn btn-blue btn-sm" onclick="copyTopCustomersPhones()">كوبي الأرقام</button>
+      <span id="db-cust-count" style="font-size:12px;color:var(--txt2);"></span>
+    </div>
+    <div id="db-top-customers"></div>
+  </div>
+</div>
+
+<!-- ===== الوارد ===== -->
+<div class="page" id="page-incoming">
+  <div class="card" style="margin-bottom:10px;">
+    <div class="card-title">توزيع أرقام على الخلايا</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;">الصق الأرقام هنا (كل رقم في سطر) وهيتوزعوا على الخلايا تلقائي</div>
+    <div style="display:flex;gap:8px;align-items:flex-start;">
+      <textarea id="phones-paste" placeholder="01xxxxxxxxx&#10;01xxxxxxxxx&#10;01xxxxxxxxx&#10;..." style="flex:1;height:80px;resize:none;font-size:13px;direction:ltr;font-family:monospace;"></textarea>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <button class="btn btn-acc" onclick="distributePhones()">توزيع ←</button>
+        <button class="btn btn-sm" onclick="document.getElementById('phones-paste').value='';">مسح</button>
+      </div>
+    </div>
+    <div id="distribute-msg" style="font-size:12px;margin-top:6px;"></div>
+  </div>
+  <div class="card" style="margin-bottom:10px;">
+    <div class="card-title">📄 ارفع ملف شات الواتساب</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;">صدّر الشات من الموبايل (نقل الدردشة ← بدون وسائط) وارفع الملف هنا — بيقبل zip و txt</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <input type="file" id="chat-file" accept=".txt,.zip" style="flex:1;min-width:200px;font-size:12px;padding:6px;background:var(--surf2);border:1px solid var(--bord);border-radius:8px;color:var(--txt);">
+      <select id="chat-range" style="max-width:170px;">
+        <option value="24">آخر 24 ساعة</option>
+        <option value="12">آخر 12 ساعة</option>
+        <option value="48">آخر يومين</option>
+        <option value="0">كل الشات</option>
+      </select>
+      <select id="chat-file-rider" style="min-width:130px;"><option value="">بدون مندوب</option></select>
+      <button class="btn btn-acc" onclick="readChatFile()">استخراج ←</button>
+    </div>
+    <div style="font-size:11px;color:var(--txt2);margin-top:4px;">💡 اختار المندوب هنا قبل الاستخراج — هيتسجل عليه عدد الأوردرات وإجمالي التوصيل تلقائي من غير ما تختار تاني تحت</div>
+    <div id="chat-msg" style="font-size:12px;margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">خلايا الوارد — علّم على الخلايا اللي عايز تحفظها</div>
+    <div class="cells-grid" id="cells-grid"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+      <label style="font-size:12px;color:var(--txt2);">المندوب:</label>
+      <select id="cell-rider" style="min-width:130px;"><option value="">بدون مندوب</option></select>
+      <button class="btn btn-acc" onclick="processCells()">استخراج المحددة ←</button>
+      <button class="btn" onclick="selectAllCells()">تحديد الكل</button>
+      <button class="btn" onclick="clearAllCells()">مسح الكل</button>
+      <button class="btn btn-blue" id="undo-btn" onclick="undoClearCells()" style="display:none;">↩️ استرجاع</button>
+      <span id="autosave-indicator" style="font-size:11px;color:var(--txt2);margin-right:auto;"></span>
+    </div>
+  </div>
+  <div id="parsed-orders"></div>
+</div>
+
+<!-- ===== الزبائن ===== -->
+<div class="page" id="page-customers">
+  <div class="stats">
+    <div class="stat"><div class="num" id="c-total">0</div><div class="lbl">إجمالي الزبائن</div></div>
+    <div class="stat"><div class="num" id="c-vip">0</div><div class="lbl">مميز ⭐</div></div>
+    <div class="stat"><div class="num" id="c-lost">0</div><div class="lbl">مفقودين 🔴</div></div>
+    <div class="stat"><div class="num" id="c-new7">0</div><div class="lbl">جدد الأسبوع</div></div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+    <button class="btn btn-blue btn-sm" onclick="copyTodayPhones()">كوبي أرقام النهارده</button>
+    <button class="btn btn-blue btn-sm" onclick="copyMonthPhones()">كوبي أرقام الشهر</button>
+  </div>
+  <div style="background:var(--surf);border:1px solid var(--bord);border-radius:10px;padding:12px;margin-bottom:12px;">
+    <div style="font-size:13px;font-weight:700;color:var(--acc);margin-bottom:8px;">🔕 الزبائن اللي مطلبوش من فترة</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+      <button class="btn btn-sm" onclick="copyPeriodPhones(7)" style="background:rgba(155,89,182,.15);color:#c39bd3;border-color:rgba(155,89,182,.35);">من أسبوع</button>
+      <button class="btn btn-sm" onclick="copyPeriodPhones(14)" style="background:rgba(155,89,182,.15);color:#c39bd3;border-color:rgba(155,89,182,.35);">من أسبوعين</button>
+      <button class="btn btn-sm" onclick="copyPeriodPhones(30)" style="background:rgba(243,156,18,.15);color:var(--amber);border-color:rgba(243,156,18,.35);">من شهر</button>
+      <button class="btn btn-sm" onclick="copyPeriodPhones(60)" style="background:rgba(243,156,18,.15);color:var(--amber);border-color:rgba(243,156,18,.35);">من شهرين</button>
+      <button class="btn btn-sm" onclick="copyPeriodPhones(90)" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.35);">من 3 شهور</button>
+      <button class="btn btn-sm" onclick="copyPeriodPhones(180)" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.35);">من 6 شهور</button>
+      <button class="btn btn-sm" onclick="copyPeriodPhones(365)" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.35);">من سنة</button>
+      <button class="btn btn-sm" onclick="copyPeriodPhones(730)" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.35);">من سنتين</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--bord);padding-top:10px;">
+      <span style="font-size:12px;color:var(--txt2);">فترة محددة: مطلبوش من</span>
+      <input type="number" id="gap-min" value="30" min="0" style="max-width:80px;text-align:center;">
+      <span style="font-size:12px;color:var(--txt2);">يوم لحد</span>
+      <input type="number" id="gap-max" value="90" min="0" style="max-width:80px;text-align:center;">
+      <span style="font-size:12px;color:var(--txt2);">يوم</span>
+      <button class="btn btn-acc btn-sm" onclick="copyGapRange()">اعرض الأرقام</button>
+      <span style="font-size:11px;color:var(--txt2);">(مثال: من 30 لحد 90 = آخر طلب ليهم بين شهر و 3 شهور)</span>
+    </div>
+  </div>
+  <div style="background:var(--surf);border:1px solid var(--bord);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <span style="font-size:12px;color:var(--txt2);font-weight:600;">كوبي بالتصنيف:</span>
+    <button class="btn btn-sm" onclick="copyRankPhones('مميز')" style="background:rgba(155,89,182,.2);color:#c39bd3;border-color:rgba(155,89,182,.4);">⭐ مميز</button>
+    <button class="btn btn-sm" onclick="copyRankPhones('كويس')" style="background:rgba(46,204,113,.15);color:var(--green);border-color:rgba(46,204,113,.3);">🟢 كويس</button>
+    <button class="btn btn-sm" onclick="copyRankPhones('عادي')" style="background:rgba(52,152,219,.15);color:var(--blue);border-color:rgba(52,152,219,.3);">🔵 عادي</button>
+    <button class="btn btn-sm" onclick="copyRankPhones('ضعيف')" style="background:rgba(243,156,18,.15);color:var(--amber);border-color:rgba(243,156,18,.3);">🟡 ضعيف</button>
+    <button class="btn btn-sm" onclick="copyRankPhones('مفقود')" style="background:rgba(231,76,60,.15);color:var(--red);border-color:rgba(231,76,60,.3);">🔴 مفقود</button>
+    <span style="font-size:12px;color:var(--txt2)">النهارده: <strong style="color:var(--acc)" id="today-cnt">0</strong> زبون</span>
+  </div>
+  <div style="background:var(--surf);border:1px solid var(--bord);border-radius:10px;padding:10px 12px;margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <span style="font-size:12px;color:var(--txt2);font-weight:600;">كوبي بالتصنيف:</span>
+    <select id="copy-cat-sel" style="min-width:120px;">
+      <option value="فرد">أفراد</option><option value="مطعم">مطاعم</option>
+      <option value="أونلاين">أونلاين</option><option value="شواية">شوايات سمك</option>
+      <option value="محل">محلات</option><option value="معمل">معامل</option>
+      <option value="صيدلية">صيدليات</option>
+    </select>
+    <button class="btn btn-blue btn-sm" onclick="copyCatPhones()">كوبي أرقام التصنيف ده</button>
+    <span style="color:var(--bord)">|</span>
+    <span style="font-size:12px;color:var(--txt2);font-weight:600;">يوم معين:</span>
+    <input type="date" id="copy-date-sel" style="max-width:150px;" value="">
+    <button class="btn btn-blue btn-sm" onclick="copyDatePhones()">كوبي أرقام اليوم ده</button>
+    <button class="btn btn-sm" onclick="showDayIncome()" style="background:rgba(46,204,113,.15);color:var(--green);border-color:rgba(46,204,113,.3);">إيراد اليوم ده</button>
+  </div>
+  <div class="frow">
+    <input placeholder="ابحث باسم أو رقم أو شارع أو فئة..." id="srch-cust" oninput="debouncedRenderCustomers()">
+    <select id="flt-cat" onchange="renderCustomers()">
+      <option value="all">كل الفئات</option>
+      <option value="فرد">أفراد</option><option value="مطعم">مطاعم</option>
+      <option value="أونلاين">أونلاين</option><option value="شواية">شوايات سمك</option>
+      <option value="محل">محلات</option><option value="معمل">معامل</option>
+      <option value="صيدلية">صيدليات</option>
+    </select>
+    <select id="flt-rank" onchange="renderCustomers()">
+      <option value="all">كل التصنيفات</option>
+      <option value="مميز">مميز</option><option value="كويس">كويس</option>
+      <option value="عادي">عادي</option><option value="ضعيف">ضعيف</option>
+      <option value="مفقود">مفقود</option>
+    </select>
+    <select id="flt-period" onchange="renderCustomers()">
+      <option value="all">كل الفترات</option>
+      <option value="7">ما طلبش من أسبوع</option>
+      <option value="30">ما طلبش من شهر</option>
+      <option value="60">ما طلبش من شهرين</option>
+      <option value="180">ما طلبش من 6 شهور</option>
+      <option value="365">ما طلبش من سنة</option>
+    </select>
+    <input type="time" id="flt-tf" onchange="renderCustomers()" title="من الساعة" style="max-width:110px;">
+    <input type="time" id="flt-tt" onchange="renderCustomers()" title="للساعة" style="max-width:110px;">
+    <button class="btn btn-sm" onclick="document.getElementById('flt-tf').value='';document.getElementById('flt-tt').value='';renderCustomers();toast('تم مسح الوقت ✓');" style="background:rgba(231,76,60,.1);color:var(--red);border-color:rgba(231,76,60,.3);">&#x2715; مسح الوقت</button>
+  </div>
+  <div class="twrap">
+    <table><thead><tr>
+      <th>الاسم</th><th>الموبايل</th><th>الفئة</th><th>التصنيف</th><th>الأوردرات</th><th>آخر طلب</th><th>أيام</th><th>الشارع</th><th>شكاوى</th><th></th>
+    </tr></thead><tbody id="cust-tb"></tbody></table>
+  </div>
+</div>
+
+<!-- ===== المناديب ===== -->
+<div class="page" id="page-riders">
+  <div class="stats" style="grid-template-columns:repeat(3,1fr);">
+    <div class="stat"><div class="num" id="riders-count-total">0</div><div class="lbl">إجمالي المناديب</div></div>
+    <div class="stat"><div class="num" id="riders-count-active" style="color:var(--green);">0</div><div class="lbl">شغالين</div></div>
+    <div class="stat"><div class="num" id="riders-count-left" style="color:var(--red);">0</div><div class="lbl">ماشيين</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">إضافة مندوب جديد</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <input id="new-rider-name" placeholder="اسم المندوب" style="max-width:160px;">
+      <input id="new-rider-phone" placeholder="رقم الموبايل" style="max-width:140px;direction:ltr;text-align:right;">
+      <input id="new-rider-pct" type="number" placeholder="نسبته % (30)" value="30" style="max-width:95px;">
+      <select id="new-rider-shift" style="max-width:120px;">
+        <option value="day">☀️ بالنهار</option>
+        <option value="night">🌙 بليل</option>
+      </select>
+      <label class="btn btn-sm" style="cursor:pointer;white-space:nowrap;">📷 صورة البطاقة
+        <input id="new-rider-photo" type="file" accept="image/*" style="display:none;">
+      </label>
+      <div id="new-rider-photo-preview"></div>
+      <button class="btn btn-acc" onclick="addRider()">إضافة +</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">سجل المناديب</div>
+    <div id="riders-registry" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">حساب المناديب المالي</div>
+    <div class="frow">
+      <select id="rider-period" onchange="renderRiderStats()">
+        <option value="today">النهارده</option><option value="week">الأسبوع</option>
+        <option value="month">الشهر</option><option value="all">الكل</option>
+      </select>
+      <input type="date" id="rider-df" onchange="renderRiderStats()">
+      <input type="date" id="rider-dt" onchange="renderRiderStats()">
+    </div>
+    <div class="twrap">
+      <table><thead><tr>
+        <th>المندوب</th><th>عدد الأوردرات</th><th>إجمالي التوصيل</th><th>نسبته %</th><th>صافي المكتب</th><th>نصيبه</th><th>حذف</th>
+      </tr></thead><tbody id="riders-tb"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== تصفية المناديب ===== -->
+<div class="page" id="page-settlements">
+  <div class="card" id="settle-lock">
+    <div class="card-title" id="settle-pass-title">🔒 الصفحة محمية بباسورد</div>
+    <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;" id="settle-pass-hint"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <input type="password" id="settle-pass-input" placeholder="اكتب الباسورد" style="max-width:160px;" onkeydown="if(event.key==='Enter')checkSettlePassword();">
+      <button class="btn btn-acc" onclick="checkSettlePassword()">دخول</button>
+    </div>
+    <div id="settle-pass-err" style="color:var(--red);font-size:11px;margin-top:8px;"></div>
+  </div>
+
+  <div id="settle-content" style="display:none;">
+    <div style="display:flex;justify-content:flex-end;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+      <button class="btn btn-sm" onclick="changeSettlePassword()">🔑 تغيير الباسورد</button>
+      <button class="btn btn-sm btn-red" onclick="lockSettlePage()">🔒 قفل الصفحة</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🗓️ يوم التصفية</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px;">
+        <button class="btn btn-sm" onclick="shiftSettleDay(-1)">◀ يوم قبل</button>
+        <input type="date" id="settle-day-pick" onchange="renderSettleDay()">
+        <button class="btn btn-sm" onclick="shiftSettleDay(1)">يوم بعد ▶</button>
+        <button class="btn btn-sm btn-acc" onclick="document.getElementById('settle-day-pick').value=today();renderSettleDay();">النهارده</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">مش لاقي المندوب؟ ضيفه هنا</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <input id="qs-rider-name" placeholder="اسم المندوب" style="max-width:160px;">
+        <input id="qs-rider-phone" placeholder="رقم الموبايل (اختياري)" style="max-width:150px;direction:ltr;text-align:right;">
+        <input id="qs-rider-pct" type="number" placeholder="نسبته % (30)" value="30" style="max-width:95px;">
+        <button class="btn btn-acc" onclick="quickAddSettleRider()">إضافة مندوب +</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">تسجيل تصفية</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <select id="settle-rider" style="min-width:130px;"><option value="">اختر مندوب</option></select>
+        <input id="settle-amount" type="number" placeholder="مبلغ التصفية" style="max-width:130px;">
+        <input id="settle-note" placeholder="ملاحظة (عليه فلوس / كروت...)" style="max-width:220px;">
+        <button class="btn btn-acc" onclick="addSettlement()">تسجيل +</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💵 تصفية كبيرة دفعة واحدة</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;">لو جمعت مبلغ كبير من كل المناديب مرة واحدة - اكتبه هنا وهيتسجل مع تصفيات اليوم وفي نفس الوقت يتحسب ضمن الربح تلقائي.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <input id="settle-bulk-amount" type="number" placeholder="المبلغ الإجمالي" style="max-width:150px;">
+        <input id="settle-bulk-note" placeholder="ملاحظة (اختياري)" style="max-width:220px;">
+        <button class="btn btn-acc" onclick="addBulkSettlement()">تسجيل التصفية الكبيرة +</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">تصفيات اليوم</div>
+      <div class="twrap">
+        <table><thead><tr>
+          <th>المندوب</th><th>المبلغ</th><th>ملاحظة</th><th>الحالة</th><th>وقت التسجيل</th><th>وقت الدفع</th><th></th>
+        </tr></thead><tbody id="settle-tb"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💰 إنستاباي وفودافون كاش</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+        <select id="wallet-earn-type" style="min-width:110px;">
+          <option value="instapay">إنستاباي</option>
+          <option value="vf">فودافون كاش</option>
+          <option value="credit">شحن رصيد</option>
+          <option value="ads">إعلانات</option>
+        </select>
+        <input id="wallet-earn-amount" type="number" placeholder="المبلغ اللي كسبته" style="max-width:130px;">
+        <input type="date" id="wallet-earn-date" style="max-width:135px;">
+        <input id="wallet-earn-note" placeholder="ملاحظة (اختياري)" style="max-width:170px;">
+        <button class="btn btn-green" onclick="addWalletEarn()">تسجيل كسب +</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+        <input id="wallet-wd-amount" type="number" placeholder="مبلغ السحب" style="max-width:130px;">
+        <input type="date" id="wallet-wd-date" style="max-width:135px;">
+        <input id="wallet-wd-note" placeholder="ملاحظة (اختياري)" style="max-width:170px;">
+        <button class="btn btn-red" onclick="addWalletWithdraw()">تسجيل سحب +</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;border-top:1px solid var(--bord);padding-top:10px;">
+        <span style="font-size:11px;color:var(--txt2);">اعرف الربح من يوم لحد يوم:</span>
+        <input type="date" id="wallet-range-from" onchange="renderWallet()">
+        <span style="font-size:11px;color:var(--txt2);">إلى</span>
+        <input type="date" id="wallet-range-to" onchange="renderWallet()">
+        <button class="btn btn-sm" onclick="document.getElementById('wallet-range-from').value='';document.getElementById('wallet-range-to').value='';renderWallet();">مسح الفلتر</button>
+      </div>
+      <div id="wallet-stats" style="margin-bottom:10px;"></div>
+      <div class="twrap">
+        <table><thead><tr>
+          <th>التاريخ</th><th>النوع</th><th>المبلغ</th><th>ملاحظة</th><th></th>
+        </tr></thead><tbody id="wallet-tb"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 تقرير الشهر</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+        <input type="month" id="settle-month-pick" onchange="renderSettleMonth();renderWallet();">
+      </div>
+      <div id="settle-month-summary"></div>
+    </div>
+  </div>
+</div>
+<div class="page" id="page-history">
+  <div class="stats">
+    <div class="stat"><div class="num" id="h-today">0</div><div class="lbl">أوردرات النهارده</div></div>
+    <div class="stat"><div class="num" id="h-month">0</div><div class="lbl">أوردرات الشهر</div></div>
+  </div>
+  <div class="frow">
+    <input placeholder="ابحث..." id="srch-hist" oninput="debouncedRenderHistory()">
+    <input type="date" id="flt-exact" onchange="renderHistory()" title="تاريخ محدد">
+    <input type="date" id="flt-from" onchange="renderHistory()" title="من تاريخ">
+    <input type="date" id="flt-to"   onchange="renderHistory()" title="لتاريخ">
+    <select id="flt-hp" onchange="renderHistory()">
+      <option value="all">كل السجل</option>
+      <option value="today">النهارده</option>
+      <option value="week">آخر أسبوع</option>
+      <option value="month">الشهر</option>
+    </select>
+  </div>
+  <div class="twrap">
+    <table><thead><tr>
+      <th>الوقت</th><th>الاسم</th><th>الموبايل</th><th>الطلب</th><th>الشارع</th><th>المندوب</th><th>التوصيل</th><th>حذف</th>
+    </tr></thead><tbody id="hist-tb"></tbody></table>
+  </div>
+</div>
+
+<!-- ===== الشكاوى ===== -->
+<div class="page" id="page-complaints">
+  <div class="card">
+    <div class="card-title">تسجيل شكوى</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+      <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:3px">رقم الزبون</label><input id="comp-phone" placeholder="01xxxxxxxxx"></div>
+      <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:3px">المندوب</label><select id="comp-rider"><option value="">اختر</option></select></div>
+      <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:3px">نوع المشكلة</label>
+        <select id="comp-type">
+          <option value="تأخير">تأخير</option><option value="طلب غلط">طلب غلط</option>
+          <option value="سوء تعامل">سوء تعامل</option><option value="ناقص">طلب ناقص</option>
+          <option value="أخرى">أخرى</option>
+        </select>
+      </div>
+    </div>
+    <textarea id="comp-note" placeholder="تفاصيل..." style="width:100%;height:65px;margin-bottom:8px;"></textarea>
+    <button class="btn btn-acc" onclick="addComplaint()">حفظ الشكوى</button>
+  </div>
+  <div class="twrap">
+    <table><thead><tr><th>التاريخ</th><th>الزبون</th><th>المندوب</th><th>النوع</th><th>التفاصيل</th><th>حذف</th></tr></thead>
+    <tbody id="comp-tb"></tbody></table>
+  </div>
+</div>
+
+<!-- ===== الإعدادات ===== -->
+<div class="page" id="page-settings">
+  <div class="card">
+    <div class="card-title">إدارة الفئات</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <input id="new-cat" placeholder="اسم الفئة الجديدة (مثل: مدرسة، كافيه)" style="max-width:250px;">
+      <button class="btn btn-acc" onclick="addCat()">إضافة +</button>
+    </div>
+    <div id="cats-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">إدارة الشوارع</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <input id="new-street" placeholder="اسم الشارع الجديد" style="max-width:220px;">
+      <button class="btn btn-acc" onclick="addStreet()">إضافة شارع +</button>
+    </div>
+    <div id="streets-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">إعدادات التوصيل</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px">مكان واحد (ج)</label><input type="number" id="fee1" value="20" onchange="saveSettings()"></div>
+      <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px">مكانين (ج)</label><input type="number" id="fee2" value="25" onchange="saveSettings()"></div>
+      <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px">3 أماكن (ج)</label><input type="number" id="fee3" value="30" onchange="saveSettings()"></div>
+      <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px">4 أماكن (ج)</label><input type="number" id="fee4" value="35" onchange="saveSettings()"></div>
+      <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px">خارج البلد (ج)</label><input type="number" id="fee-out" value="40" onchange="saveSettings()"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== البيانات ===== -->
+<div class="page" id="page-backup">
+  <div class="card">
+    <div class="card-title">فحص وإحصائيات البيانات</div>
+    <button class="btn btn-acc" onclick="showDataStats()" style="margin-bottom:12px;">فحص البيانات كاملة</button>
+    <div id="data-stats"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">نسخ احتياطي</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="btn btn-acc" onclick="exportData()">تحميل نسخة احتياطية</button>
+      <label class="btn btn-blue" style="cursor:pointer;">استعادة من ملف <input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+    </div>
+    <div style="background:var(--surf2);border-radius:8px;padding:12px;font-size:12px;color:var(--txt2);line-height:2.2;">
+      <div>📦 أوردرات: <strong style="color:var(--acc)" id="bk-orders">0</strong></div>
+      <div>👥 زبائن: <strong style="color:var(--acc)" id="bk-custs">0</strong></div>
+      <div>🛵 مناديب: <strong style="color:var(--acc)" id="bk-riders">0</strong></div>
+      <div>⚠️ شكاوى: <strong style="color:var(--acc)" id="bk-comps">0</strong></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">تقرير شهري</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <input type="month" id="rpt-month">
+      <button class="btn btn-acc" onclick="showMonthReport()">عرض</button>
+    </div>
+    <div id="month-report"></div>
+  </div>
+</div>
+<!-- ===== التنبيهات ===== -->
+<div class="page" id="page-alerts">
+  <div class="card">
+    <div class="card-title">🔔 زبائن كانوا بيطلبوا بانتظام وقطعوا</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;">ده بيجيبلك الزبائن اللي عندهم نمط انتظام (طلبوا 4+ أوردرات في شهر) وبعدين وقفوا أكتر من 30 يوم.</div>
+    <div class="frow">
+      <select id="alert-period" onchange="renderAlerts()">
+        <option value="7">ما طلبوش من 7 أيام</option>
+        <option value="14">ما طلبوش من 14 يوم</option>
+        <option value="30">ما طلبوش من 30 يوم</option>
+        <option value="60">ما طلبوش من 60 يوم</option>
+        <option value="90">ما طلبوش من 90 يوم</option>
+      </select>
+      <input type="time" id="alert-tf" onchange="renderAlerts()" placeholder="من الساعة" title="من الساعة" style="max-width:120px;">
+      <input type="time" id="alert-tt" onchange="renderAlerts()" placeholder="للساعة" title="للساعة" style="max-width:120px;">
+      <button class="btn btn-blue btn-sm" onclick="copyAlertPhones()">كوبي الأرقام دي</button>
+    </div>
+    <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;">💡 لو حددت وقت، هيجيبلك اللي كانوا بيطلبوا في الوقت ده تحديداً (مثلاً فطار من 8 لـ 11)</div>
+  </div>
+  <div class="twrap">
+    <table><thead><tr>
+      <th>الاسم</th><th>الموبايل</th><th>الفئة</th><th>عدد الطلبات الكلي</th><th>آخر طلب</th><th>أيام من آخر طلب</th><th>وقت الطلب المعتاد</th>
+    </tr></thead><tbody id="alerts-tb"></tbody></table>
+  </div>
+</div>
+
+</div>
+
+<!-- ===== المنقطعون ===== -->
+<div class="page" id="page-lost">
+  <div class="card">
+    <div class="card-title">🔴 الزبائن المنقطعون</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;">الزبائن اللي طلبوا أكتر من مرة وبعدين انقطعوا - مرتبين من الأقدم انقطاعاً للأحدث</div>
+    <div class="frow" style="flex-wrap:wrap;gap:8px;">
+      <select id="lost-days" onchange="renderLost()">
+        <option value="7">منقطع من 7 أيام</option>
+        <option value="14">منقطع من 14 يوم</option>
+        <option value="30" selected>منقطع من 30 يوم</option>
+        <option value="60">منقطع من 60 يوم</option>
+        <option value="90">منقطع من 90 يوم</option>
+      </select>
+      <select id="lost-min-orders" onchange="renderLost()">
+        <option value="1">طلب مرة واحدة فأكثر</option>
+        <option value="2" selected>طلب مرتين فأكثر</option>
+        <option value="5">طلب 5 مرات فأكثر</option>
+        <option value="10">طلب 10 مرات فأكثر</option>
+      </select>
+      <button class="btn btn-sm btn-blue" onclick="copyLostPhones()">كوبي الأرقام</button>
+      <span id="lost-count" style="font-size:12px;color:var(--txt2);"></span>
+    </div>
+  </div>
+  <div class="twrap">
+    <table>
+      <thead><tr>
+        <th>الاسم</th>
+        <th>الموبايل</th>
+        <th>الفئة</th>
+        <th>إجمالي الطلبات</th>
+        <th>آخر طلب</th>
+        <th>أيام من آخر طلب</th>
+        <th>أول طلب</th>
+        <th>ملاحظات</th>
+        <th>واتساب</th>
+      </tr></thead>
+      <tbody id="lost-tb"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Print Modal -->
+<div class="modal" id="print-modal">
+  <div class="modal-box" id="print-box" style="max-width:400px;">
+    <div class="modal-title">🖨️ فاتورة الأوردر</div>
+    <div id="print-content"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;">
+      <button class="btn" onclick="document.getElementById('print-modal').classList.remove('open')">إغلاق</button>
+      <button class="btn btn-acc" onclick="printInvoice()">طباعة 🖨️</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal" id="profile-modal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div class="modal-title" id="modal-title" style="margin:0;">بروفايل الزبون</div>
+      <button onclick="closeModal()" style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.3);color:var(--red);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:18px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
+    </div>
+    <div id="modal-body"></div>
+    <div style="text-align:left;margin-top:14px;"><button class="btn" onclick="closeModal()">إغلاق</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+// ===== Firebase =====
+const firebaseConfig = {
+  apiKey: "AIzaSyB4-xsCMlctbpLqymC1KUYH6v_wFkdaarc",
+  authDomain: "my-work-9ade9.firebaseapp.com",
+  projectId: "my-work-9ade9",
+  storageBucket: "my-work-9ade9.firebasestorage.app",
+  messagingSenderId: "843750690209",
+  appId: "1:843750690209:web:710398fd8f81cd97100fe0",
+  measurementId: "G-SQ91ER0ZJE"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+try{ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
+const dbFS = firebase.firestore();
+try{ dbFS.enablePersistence({synchronizeTabs:true}); }catch(e){}
+
+let suppressCloudPush=false;
+let cloudPushTimer=null;
+
+function setSyncStatus(txt){
+  var el=document.getElementById('sync-status');
+  if(el) el.textContent=txt;
+}
+
+function doLogin(){
+  var email=(document.getElementById('login-email').value||'').trim();
+  var pass=document.getElementById('login-pass').value||'';
+  var err=document.getElementById('login-err');
+  err.textContent='';
+  if(!email||!pass){err.textContent='اكتب الإيميل والباسورد';return;}
+  document.getElementById('login-loading').style.display='block';
+  auth.signInWithEmailAndPassword(email,pass).then(function(){
+    try{ localStorage.setItem('fk6_saved_email', email); }catch(e){}
+  }).catch(function(e){
+    document.getElementById('login-loading').style.display='none';
+    err.textContent='الإيميل أو الباسورد غلط';
+  });
+}
+function doLogout(){
+  if(!confirm('تخرج من البرنامج؟'))return;
+  auth.signOut();
+}
+
+function userDocRef(){
+  if(!auth.currentUser) return null;
+  return dbFS.collection('users').doc(auth.currentUser.uid).collection('data').doc('main');
+}
+
+function cloudPullOnce(){
+  var ref=userDocRef();
+  if(!ref)return;
+  setSyncStatus('⏳ بيجيب بياناتك...');
+  ref.get().then(function(doc){
+    if(doc.exists){
+      var cloud=doc.data();
+      D.orders=cloud.orders||[];
+      D.customers=cloud.customers||{};
+      D.riders=cloud.riders||[];
+      D.complaints=cloud.complaints||[];
+      D.streets=cloud.streets||D.streets;
+      D.extraCats=cloud.extraCats||[];
+      D.settlements=cloud.settlements||[];
+      D.wallet=cloud.wallet||[];
+      D.settings=Object.assign({},D.settings,cloud.settings||{});
+      suppressCloudPush=true;
+      saveData();
+      fullRerender();
+      setSyncStatus('☁️ متزامن');
+    }else{
+      cloudPush();
+      setSyncStatus('☁️ متزامن (أول مرة)');
+    }
+  }).catch(function(e){
+    setSyncStatus('⚠️ شغال محلي - هيتزامن لما النت يرجع');
+  });
+}
+
+function scheduleCloudPush(){
+  if(!auth.currentUser)return;
+  if(suppressCloudPush){suppressCloudPush=false;return;}
+  clearTimeout(cloudPushTimer);
+  setSyncStatus('⏳ بيرفع...');
+  cloudPushTimer=setTimeout(cloudPush,1200);
+}
+function cloudPush(){
+  var ref=userDocRef();
+  if(!ref)return;
+  var payload={
+    orders:D.orders,customers:D.customers,riders:D.riders,complaints:D.complaints,
+    streets:D.streets,extraCats:D.extraCats,settlements:D.settlements,wallet:D.wallet,
+    settings:D.settings,updatedAt:new Date().toISOString()
+  };
+  ref.set(payload).then(function(){
+    setSyncStatus('☁️ متزامن');
+  }).catch(function(e){
+    setSyncStatus('⚠️ مفيش نت - هيتزامن تلقائي لما يرجع');
+  });
+}
+
+function fullRerender(){
+  refreshRiderSelects();
+  renderRidersRegistry();
+  refreshSettleRiderSelect();
+  rebuildCatSelects();
+  renderDashboard();
+  updateHistStats();
+}
+
+auth.onAuthStateChanged(function(user){
+  var gate=document.getElementById('login-gate');
+  var hdr=document.getElementById('app-hdr');
+  var main=document.getElementById('app-main');
+  if(user){
+    gate.style.display='none';
+    hdr.style.display='flex';
+    main.style.display='block';
+    cloudPullOnce();
+  }else{
+    gate.style.display='flex';
+    hdr.style.display='none';
+    main.style.display='none';
+    document.getElementById('login-pass').value='';
+    document.getElementById('login-loading').style.display='none';
+    try{
+      var savedEmail=localStorage.getItem('fk6_saved_email');
+      if(savedEmail) document.getElementById('login-email').value=savedEmail;
+    }catch(e){}
+  }
+});
+
+// ===== Data =====
+let D={orders:[],customers:{},riders:[],complaints:[],streets:[],extraCats:[],settlements:[],wallet:[],settings:{fee1:20,fee2:25,fee3:30,fee4:35,feeOut:40}};
+var DEFAULT_CATS=['فرد','مطعم','أونلاين','شواية','محل','معمل','صيدلية'];
+function getAllCats(){var r=DEFAULT_CATS.slice();D.extraCats.forEach(function(c){if(DEFAULT_CATS.indexOf(c)<0)r.push(c);});return r;}
+
+function loadData(){
+  try{D.orders=JSON.parse(localStorage.getItem('fk6_orders')||'[]');}catch(e){D.orders=[];}
+  try{D.customers=JSON.parse(localStorage.getItem('fk6_customers')||'{}');}catch(e){D.customers={};}
+  try{D.riders=JSON.parse(localStorage.getItem('fk6_riders')||'[]');}catch(e){D.riders=[];}
+  try{D.settlements=JSON.parse(localStorage.getItem('fk6_settlements')||'[]');}catch(e){D.settlements=[];}
+  try{D.wallet=JSON.parse(localStorage.getItem('fk6_wallet')||'[]');}catch(e){D.wallet=[];}
+  try{D.complaints=JSON.parse(localStorage.getItem('fk6_complaints')||'[]');}catch(e){D.complaints=[];}
+  try{D.extraCats=JSON.parse(localStorage.getItem('fk6_excats')||'[]');}catch(e){D.extraCats=[];}
+  try{D.streets=JSON.parse(localStorage.getItem('fk6_streets')||'["تريان","المركز","حامول العرب","حامول السعيد","السلاهيب","الجامع","أوسكر","الحلافي","المستشفى","وسط البلد","المرور","أبو منصور"]');}catch(e){D.streets=[];}
+  try{D.settings=JSON.parse(localStorage.getItem('fk6_settings')||'{}');D.settings={fee1:20,fee2:25,fee3:30,fee4:35,feeOut:40,...D.settings};}catch(e){}
+}
+function saveData(){
+  localStorage.setItem('fk6_orders',JSON.stringify(D.orders));
+  localStorage.setItem('fk6_customers',JSON.stringify(D.customers));
+  localStorage.setItem('fk6_riders',JSON.stringify(D.riders));
+  localStorage.setItem('fk6_settlements',JSON.stringify(D.settlements));
+  localStorage.setItem('fk6_wallet',JSON.stringify(D.wallet));
+  localStorage.setItem('fk6_complaints',JSON.stringify(D.complaints));
+  localStorage.setItem('fk6_streets',JSON.stringify(D.streets));
+  localStorage.setItem('fk6_excats',JSON.stringify(D.extraCats));
+  localStorage.setItem('fk6_settings',JSON.stringify(D.settings));
+  scheduleCloudPush();
+}
+loadData();
+
+// ===== Helpers =====
+function today(){return new Date().toISOString().slice(0,10);}
+function thisMonth(){return new Date().toISOString().slice(0,7);}
+function thisYear(){return new Date().toISOString().slice(0,4);}
+function debounce(fn,ms){
+  var t;
+  return function(){
+    var ctx=this,args=arguments;
+    clearTimeout(t);
+    t=setTimeout(function(){fn.apply(ctx,args);},ms||200);
+  };
+}
+var debouncedRenderCustomers=debounce(function(){renderCustomers();},220);
+var debouncedRenderHistory=debounce(function(){renderHistory();},220);
+function daysDiff(ds){if(!ds)return null;return Math.floor((Date.now()-new Date(ds))/86400000);}
+function fmtD(ds){if(!ds)return'—';const p=ds.split('-');return p[2]+'/'+p[1];}
+function fmtDT(iso){const d=new Date(iso);return fmtD(iso.slice(0,10))+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function fmtTime(iso){const d=new Date(iso);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+
+function toast(msg,color='var(--green)'){
+  const t=document.getElementById('toast-el');
+  t.textContent=msg;t.style.background=color;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='customers')renderCustomers();
+  if(id==='riders'){refreshRiderSelects();renderRiderStats();renderRidersRegistry();}
+  if(id==='settlements'){renderSettleGate();}
+  if(id==='history'){renderHistory();updateHistStats();}
+  if(id==='complaints'){refreshRiderSelects();renderComplaints();}
+  if(id==='settings'){renderStreets();loadSettingsUI();}
+  if(id==='dashboard') renderDashboard();
+  if(id==='alerts') renderAlerts();
+  if(id==='lost') renderLost();
+}
+
+// ===== Rank =====
+function getRank(phone, ordsForPhone){
+  const now=Date.now(),wk=7*864e5,mo=30*864e5;
+  const ords=ordsForPhone||D.orders.filter(o=>o.phone===phone);
+  if(!ords.length)return{label:'جديد',cls:'b-gray'};
+  const lw=ords.filter(o=>now-new Date(o.ts).getTime()<wk).length;
+  const lm=ords.filter(o=>now-new Date(o.ts).getTime()<mo).length;
+  if(lw>=4)return{label:'مميز',cls:'b-vip'};
+  if(lw>=2)return{label:'كويس',cls:'b-good'};
+  if(lw>=1)return{label:'عادي',cls:'b-ok'};
+  if(lm>=1)return{label:'ضعيف',cls:'b-weak'};
+  return{label:'مفقود',cls:'b-lost'};
+}
+
+// ===== Extract =====
+function extractPhone(txt){
+  let m=txt.match(/\+20\s*1[0-9][\d\s]{8,10}/);
+  if(m)return'0'+m[0].replace(/\D/g,'').slice(2);
+  m=txt.match(/01[0-9]\d{8}/);
+  return m?m[0]:null;
+}
+
+// اسم: نبحث عن pattern "اسم:" أو نتجنب الكلمات اللي هي أماكن أو أفعال
+function extractName(txt){
+  // لو فيه كلمة "اسم" أو "الاسم"
+  let m=txt.match(/(?:الاسم|اسم)[:\s]+([^\n\+\d]{3,25})/);
+  if(m)return m[1].trim();
+  return null; // مش هنحاول نخمن الاسم تلقائي عشان بيجي غلط
+}
+
+// عنوان: نبحث في قائمة الشوارع المحفوظة
+function extractAddress(txt){
+  const lower=txt.replace(/ش\s+/g,'شارع ').replace(/شارع\s+/g,'ش_').toLowerCase();
+  for(const s of D.streets){
+    if(lower.includes(s.toLowerCase())||txt.includes(s)){
+      return s;
+    }
+  }
+  // بحث عن كلمة "العنوان"
+  const m=txt.match(/(?:العنوان|عنوان)[:\s]+([^\n\+]{3,35})/);
+  if(m)return m[1].trim();
+  return null;
+}
+
+// بيدور في نص الأوردر عن سعر توصيل مختلف عن العادي (من 25 لـ 200 جنيه) — بس لو السعر مكتوب جنب كلمة (توصيل/التوصيل) صريح، مش أي رقم وجنبه "ج"
+const FEE_DETECT_MIN=25, FEE_DETECT_MAX=200;
+function detectFeeFromText(txt){
+  if(!txt) return null;
+  var fee=null;
+  var priceRe=/(?:التوصيل|توصيل)\D{0,10}(\d{2,3})\s*(?:ج|جنيه|جنيها|جنية)?|(\d{2,3})\s*(?:ج|جنيه|جنيها|جنية)?\D{0,10}(?:التوصيل|توصيل)/i;
+  var pm=priceRe.exec(txt);
+  if(pm){
+    var n=parseInt(pm[1]||pm[2],10);
+    if(n>=FEE_DETECT_MIN&&n<=FEE_DETECT_MAX) fee=n;
+  }
+  var out=/برا\s*البلد|بره\s*البلد|برة\s*البلد|خارج\s*البلد|برا\s*الحامول|بره\s*الحامول|برة\s*الحامول|خارج\s*الحامول|برانى|براني|توصيل\s*بعيد/i.test(txt);
+  if(!fee&&!out) return null;
+  return {fee:fee,out:out};
+}
+
+// ===== Cells =====
+const CELL_COUNT=40;
+function buildCells(){
+  const grid=document.getElementById('cells-grid');
+  let html='';
+  for(let i=0;i<CELL_COUNT;i++){
+    html+=`<div class="cell-wrap" id="cwrap-${i}">
+      <div class="cell-top">
+        <span class="cell-num">${i+1}</span>
+        <div style="display:flex;gap:4px;align-items:center;">
+          <button onclick="clearOneCell(${i})" style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:13px;line-height:1;padding:0 2px;" title="مسح الخلية">×</button>
+          <input type="checkbox" class="cell-chk" id="cchk-${i}" onchange="toggleCellSelect(${i})" title="علّم عشان تحفظ">
+        </div>
+      </div>
+      <textarea id="cell-${i}" placeholder="الصق الأوردر هنا..." oninput="autocheckCell(${i})"></textarea>
+    </div>`;
+  }
+  grid.innerHTML=html;
+}
+buildCells();
+
+function autocheckCell(i){
+  const v=(document.getElementById('cell-'+i)||{}).value||'';
+  const chk=document.getElementById('cchk-'+i);
+  const wrap=document.getElementById('cwrap-'+i);
+  if(v.trim()&&extractPhone(v)){
+    chk.checked=true;
+    wrap.classList.add('selected');
+  }else{
+    chk.checked=false;
+    wrap.classList.remove('selected');
+  }
+}
+
+function toggleCellSelect(i){
+  const chk=document.getElementById('cchk-'+i);
+  const wrap=document.getElementById('cwrap-'+i);
+  wrap.classList.toggle('selected',chk.checked);
+}
+
+function clearOneCell(i){
+  const el=document.getElementById('cell-'+i);
+  const chk=document.getElementById('cchk-'+i);
+  const wrap=document.getElementById('cwrap-'+i);
+  if(el)el.value='';
+  if(chk)chk.checked=false;
+  if(wrap)wrap.classList.remove('selected');
+  saveCells();
+}
+
+function selectAllCells(){
+  for(let i=0;i<CELL_COUNT;i++){
+    const v=(document.getElementById('cell-'+i)||{}).value||'';
+    if(v.trim()&&extractPhone(v)){
+      document.getElementById('cchk-'+i).checked=true;
+      document.getElementById('cwrap-'+i).classList.add('selected');
+    }
+  }
+}
+
+// حفظ الخلايا تلقائي كل دقيقة
+function saveCells(){
+  const data={};
+  for(let i=0;i<CELL_COUNT;i++){
+    const v=(document.getElementById('cell-'+i)||{}).value||'';
+    if(v.trim()) data[i]=v;
+  }
+  localStorage.setItem('fk6_cells',JSON.stringify(data));
+}
+
+function restoreCells(){
+  try{
+    const data=JSON.parse(localStorage.getItem('fk6_cells')||'{}');
+    const count=Object.keys(data).length;
+    if(!count) return;
+    Object.entries(data).forEach(([i,v])=>{
+      const el=document.getElementById('cell-'+i);
+      if(el&&v){el.value=v;autocheckCell(parseInt(i));}
+    });
+    toast(`تم استعادة ${count} خلية من آخر حفظ ✓`);
+  }catch(e){}
+}
+
+let _cellsBackup={};
+function clearAllCells(){
+  _cellsBackup={};
+  for(let i=0;i<CELL_COUNT;i++){
+    const v=(document.getElementById('cell-'+i)||{}).value||'';
+    if(v.trim()) _cellsBackup[i]=v;
+  }
+  for(let i=0;i<CELL_COUNT;i++){
+    const el=document.getElementById('cell-'+i);
+    const chk=document.getElementById('cchk-'+i);
+    const wrap=document.getElementById('cwrap-'+i);
+    if(el)el.value='';
+    if(chk)chk.checked=false;
+    if(wrap)wrap.classList.remove('selected');
+  }
+  localStorage.removeItem('fk6_cells');
+  localStorage.removeItem('fk6_chat_times');
+  document.getElementById('parsed-orders').innerHTML='';
+  document.getElementById('undo-btn').style.display='inline-block';
+  toast('تم المسح - اضغط استرجاع لو عايز ترجع','var(--amber)');
+}
+
+function undoClearCells(){
+  Object.entries(_cellsBackup).forEach(([i,v])=>{
+    const el=document.getElementById('cell-'+i);
+    if(el){el.value=v;autocheckCell(parseInt(i));}
+  });
+  document.getElementById('undo-btn').style.display='none';
+  toast('تم استرجاع الخلايا ✓');
+}
+
+function processCells(){
+  const rider=document.getElementById('cell-rider').value;
+  const chunks=[];
+  var uncheckedWithPhone=0;
+  for(let i=0;i<CELL_COUNT;i++){
+    const chk=document.getElementById('cchk-'+i);
+    const v=(document.getElementById('cell-'+i)||{}).value||'';
+    if(!chk||!chk.checked){
+      // لو فيها رقم بس مش محددة، عدّها للتنبيه
+      if(v.trim()&&extractPhone(v)) uncheckedWithPhone++;
+      continue;
+    }
+    if(v.trim()&&extractPhone(v))chunks.push({text:v.trim(),idx:i});
+  }
+  if(!chunks.length){
+    if(uncheckedWithPhone>0){
+      toast('في '+uncheckedWithPhone+' خلية فيها رقم بس مش محددة! اضغط تحديد الكل','var(--amber)');
+    } else {
+      toast('محدش محدد! علّم على الخلايا الأول','var(--amber)');
+    }
+    return;
+  }
+  if(uncheckedWithPhone>0){
+    toast('تنبيه: في '+uncheckedWithPhone+' خلية فيها رقم مش محددة هتتساب','var(--amber)');
+  }
+  window._parsed=chunks.map(c=>({
+    phone:extractPhone(c.text),
+    name:extractName(c.text),
+    address:extractAddress(c.text),
+    text:c.text.replace(/\+20\s*1[0-9][\d\s]{8,10}/g,'').replace(/01[0-9]\d{9}/g,'').replace(/\s{2,}/g,' ').trim(),
+    rider,idx:c.idx
+  }));
+  renderParsedOrders();
+}
+
+function renderParsedOrders(){
+  const parsed=window._parsed||[];
+  if(!parsed.length)return;
+  let nw=0,rt=0;
+  parsed.forEach(o=>D.orders.filter(s=>s.phone===o.phone).length?rt++:nw++);
+  const fees=D.settings;
+  let feeAlertCount=parsed.filter(o=>detectFeeFromText(o.text)).length;
+
+  let html=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+    <span style="font-size:12px;color:var(--txt2)"><strong style="color:var(--acc)">${parsed.length}</strong> أوردر | جدد: <span style="color:var(--green)">${nw}</span> | قدامى: <span style="color:var(--amber)">${rt}</span>${feeAlertCount?` | <span style="color:var(--red)">⚠️ ${feeAlertCount} أوردر سعره مختلف</span>`:''}</span>
+    <button class="btn btn-sm btn-acc" onclick="confirmAll()">حفظ الكل + مسح الخلايا</button>
+  </div><div class="orders-grid">`;
+
+  parsed.forEach((o,i)=>{
+    const hist=D.orders.filter(s=>s.phone===o.phone);
+    const isNew=!hist.length;
+    const rank=getRank(o.phone);
+    const cd=D.customers[o.phone]||{};
+    let histHtml='';
+    if(!isNew){
+      const last=hist.slice().sort((a,b)=>b.ts.localeCompare(a.ts))[0];
+      histHtml=`<div class="cust-hist">
+        <div style="font-weight:600;color:var(--acc);font-size:11px">${cd.name||'—'} | ${hist.length} طلب | <span class="badge ${rank.cls}">${rank.label}</span></div>
+        <div style="color:var(--txt2);font-size:11px">آخر: ${fmtD(last.date)} | ${(last.text||'').slice(0,40)}</div>
+      </div>`;
+    }
+
+    // Street options
+    const streetOpts=D.streets.map(s=>`<option value="${s}" ${(o.address||cd.address)===s?'selected':''}>${s}</option>`).join('');
+    const detectedAddr=o.address||cd.address||'';
+
+    // كشف سعر توصيل مختلف أو طلب برا البلد من نص الأوردر
+    const feeDet=detectFeeFromText(o.text);
+    let feeAlertHtml='', detectedOptHtml='';
+    if(feeDet){
+      if(feeDet.fee){
+        detectedOptHtml=`<option value="${feeDet.fee}" selected>⚠️ ${feeDet.fee}ج - سعر مكتشف من النص</option>`;
+        feeAlertHtml=`<div class="fee-alert-badge">⚠️ سعر توصيل مكتشف: ${feeDet.fee}ج${feeDet.out?' - برا البلد':''}</div>`;
+      } else if(feeDet.out){
+        feeAlertHtml=`<div class="fee-alert-badge">⚠️ برا البلد - راجع سعر التوصيل</div>`;
+      }
+    }
+
+    html+=`<div class="ocard ${isNew?'is-new':'is-ret'} ${feeDet?'has-fee-alert':''}" id="ocard-${i}">
+      <div class="ocard-hdr"><span style="font-size:10px;color:var(--acc)">أوردر ${i+1}${(function(){var rt=getChatTime(o.phone);if(!rt)return '';var d=new Date(rt);return ' | \u23f0 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');})()}</span><span class="badge ${isNew?'b-gray':rank.cls}">${isNew?'جديد':rank.label}</span></div>
+      <div class="ocard-phone">${o.phone}</div>
+      <div class="ocard-text">${o.text}</div>
+      ${feeAlertHtml}
+      ${histHtml}
+      <div class="ocard-fields">
+        <input id="on-${i}" placeholder="الاسم (اختياري)" value="${cd.name||''}">
+        <select id="oa-${i}">
+          <option value="">اختر الشارع</option>
+          ${streetOpts}
+          <option value="خارج البلد" ${feeDet&&feeDet.out?'selected':''}>خارج البلد</option>
+        </select>
+      </div>
+      <div class="ocard-fields">
+        <select id="ocat-${i}">
+          <option value="فرد">فرد</option><option value="مطعم">مطعم</option>
+          <option value="أونلاين">أونلاين</option><option value="شواية">شواية سمك</option>
+          <option value="محل">محل</option><option value="معمل">معمل</option>
+          <option value="صيدلية">صيدلية</option>
+        </select>
+        <select id="ofee-${i}">
+          ${detectedOptHtml}
+          <option value="${fees.fee1}">${fees.fee1}ج - مكان</option>
+          <option value="${fees.fee2}">${fees.fee2}ج - مكانين</option>
+          <option value="${fees.fee3}">${fees.fee3}ج - 3 أماكن</option>
+          <option value="${fees.fee4}">${fees.fee4}ج - 4 أماكن</option>
+          <option value="${fees.feeOut}" ${feeDet&&feeDet.out&&!feeDet.fee?'selected':''}>${fees.feeOut}ج - خارج البلد</option>
+          <option value="custom">سعر خاص</option>
+        </select>
+      </div>
+      <input id="ocfee-${i}" type="number" placeholder="سعر خاص..." style="width:100%;margin-bottom:6px;display:none;font-size:11px;padding:4px 7px;">
+      <div class="ocard-footer">
+        <button class="btn btn-sm btn-red" onclick="dismissCard(${i})">تجاهل</button>
+        <button class="btn btn-sm btn-green" onclick="confirmOne(${i})">حفظ ✓</button>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  document.getElementById('parsed-orders').innerHTML=html;
+
+  // Set saved category & fee listener
+  parsed.forEach((o,i)=>{
+    const cd=D.customers[o.phone]||{};
+    const catEl=document.getElementById('ocat-'+i);
+    if(catEl&&cd.category)catEl.value=cd.category;
+    const feeEl=document.getElementById('ofee-'+i);
+    if(feeEl)feeEl.addEventListener('change',function(){
+      document.getElementById('ocfee-'+i).style.display=this.value==='custom'?'block':'none';
+    });
+    // Auto-detect address
+    const addrEl=document.getElementById('oa-'+i);
+    if(addrEl&&detectedAddr){
+      // try match
+      const found=D.streets.find(s=>detectedAddr.includes(s));
+      if(found)addrEl.value=found;
+    }
+  });
+}
+
+function getChatTime(phone){
+  try{
+    var m=JSON.parse(localStorage.getItem('fk6_chat_times')||'{}');
+    return m[phone]||null;
+  }catch(e){ return null; }
+}
+function clearChatTime(phone){
+  try{
+    var m=JSON.parse(localStorage.getItem('fk6_chat_times')||'{}');
+    if(m[phone]){ delete m[phone]; localStorage.setItem('fk6_chat_times',JSON.stringify(m)); }
+  }catch(e){}
+}
+
+function confirmOne(i){
+  const o=(window._parsed||[])[i];
+  if(!o)return;
+  const name=(document.getElementById('on-'+i)||{}).value||'';
+  const address=(document.getElementById('oa-'+i)||{}).value||'';
+  const cat=(document.getElementById('ocat-'+i)||{}).value||'فرد';
+  const feeSel=(document.getElementById('ofee-'+i)||{}).value||'20';
+  const customFee=parseFloat((document.getElementById('ocfee-'+i)||{}).value)||0;
+  const fee=feeSel==='custom'?customFee:parseFloat(feeSel);
+
+  if(!D.customers[o.phone])D.customers[o.phone]={};
+  if(name)D.customers[o.phone].name=name;
+  if(address)D.customers[o.phone].address=address;
+  D.customers[o.phone].category=cat;
+
+  var realTs=getChatTime(o.phone);
+  var oDate=today(), oTs=new Date().toISOString();
+  if(realTs){
+    var rd2=new Date(realTs);
+    oTs=rd2.toISOString();
+    oDate=rd2.getFullYear()+'-'+String(rd2.getMonth()+1).padStart(2,'0')+'-'+String(rd2.getDate()).padStart(2,'0');
+    clearChatTime(o.phone);
+  }
+  D.orders.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,8),phone:o.phone,name,address,text:o.text.slice(0,150),fee,cat,rider:o.rider||'',date:oDate,ts:oTs});
+  saveData();
+
+  const card=document.getElementById('ocard-'+i);
+  if(card){card.style.opacity='.35';card.style.pointerEvents='none';card.querySelector('.ocard-footer').innerHTML='<span style="color:var(--green);font-size:11px;font-weight:700">✓ محفوظ</span>';}
+  toast('تم حفظ الأوردر ✓');
+}
+
+function confirmAll(){
+  (window._parsed||[]).forEach((_,i)=>{
+    const card=document.getElementById('ocard-'+i);
+    if(card&&card.style.opacity!=='.35')confirmOne(i);
+  });
+  clearAllCells();
+  document.getElementById('parsed-orders').innerHTML='';
+  toast('تم حفظ كل الأوردرات ✓');
+}
+
+function dismissCard(i){
+  const card=document.getElementById('ocard-'+i);
+  if(card)card.style.display='none';
+}
+
+
+// ===== Extra Categories =====
+function addCat(){
+  var name=(document.getElementById('new-cat').value||'').trim();
+  if(!name){toast('اكتب اسم الفئة','var(--amber)');return;}
+  var all=getAllCats();
+  if(all.indexOf(name)>=0){toast('الفئة موجودة','var(--amber)');return;}
+  D.extraCats.push(name);
+  saveData();renderCatsList();rebuildCatSelects();
+  document.getElementById('new-cat').value='';
+  toast('تم إضافة الفئة: '+name+' \u2713');
+}
+
+function delCat(idx){
+  D.extraCats.splice(idx,1);
+  saveData();renderCatsList();rebuildCatSelects();
+}
+
+function renderCatsList(){
+  var el=document.getElementById('cats-list');
+  if(!el)return;
+  var html='';
+  for(var i=0;i<DEFAULT_CATS.length;i++){
+    html+='<span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;background:var(--surf2);border:1px solid var(--bord);color:var(--txt2);margin:2px;">'+DEFAULT_CATS[i]+'</span>';
+  }
+  for(var j=0;j<D.extraCats.length;j++){
+    html+='<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px 2px 10px;border-radius:20px;font-size:12px;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);color:var(--acc);margin:2px;">'+D.extraCats[j];
+    html+='<button onclick="delCat('+j+')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;line-height:1;padding:0;">\u00d7</button></span>';
+  }
+  if(!html) html='<span style="color:var(--txt2);font-size:12px;">\u0644\u0627 \u062a\u0648\u062c\u062f \u0641\u0626\u0627\u062a \u0625\u0636\u0627\u0641\u064a\u0629</span>';
+  el.innerHTML=html;
+}
+
+function rebuildCatSelects(){
+  var all=getAllCats();
+  var optsAll='<option value="all">\u0643\u0644 \u0627\u0644\u0641\u0626\u0627\u062a</option>';
+  var opts='';
+  for(var i=0;i<all.length;i++){
+    optsAll+='<option value="'+all[i]+'">'+all[i]+'</option>';
+    opts+='<option value="'+all[i]+'">'+all[i]+'</option>';
+  }
+  var fc=document.getElementById('flt-cat');
+  if(fc){var cv=fc.value;fc.innerHTML=optsAll;fc.value=cv||'all';}
+  var cc=document.getElementById('copy-cat-sel');
+  if(cc){var cv2=cc.value;cc.innerHTML=opts;if(cv2)cc.value=cv2;}
+}
+
+// ===== Copy Period Phones =====
+function copyGapRange(){
+  var mn=parseInt(document.getElementById('gap-min').value,10);
+  var mx=parseInt(document.getElementById('gap-max').value,10);
+  if(isNaN(mn)||isNaN(mx)){ toast('اكتب الأرقام صح','var(--amber)'); return; }
+  if(mn>mx){ var t=mn; mn=mx; mx=t; }
+  var map={};
+  D.orders.forEach(function(o){
+    if(!o.date) return;
+    if(!map[o.phone]||o.date>map[o.phone]) map[o.phone]=o.date;
+  });
+  var phones=Object.keys(map).filter(function(p){
+    var d=daysDiff(map[p]);
+    return d>=mn && d<=mx;
+  });
+  if(!phones.length){ toast('مفيش زبائن في الفترة دي','var(--amber)'); return; }
+  phones.sort(function(a,b){ return map[a].localeCompare(map[b]); });
+  showPhonesList('مطلبوش من '+mn+' لحد '+mx+' يوم', phones);
+}
+
+function copyPeriodPhones(days){
+  var map={};
+  D.orders.forEach(function(o){
+    if(!map[o.phone]||o.date>map[o.phone]) map[o.phone]=o.date;
+  });
+  var cutoff=new Date(Date.now()-days*864e5).toISOString().slice(0,10);
+  var phones=Object.keys(map).filter(function(p){return map[p]<=cutoff;});
+  if(!phones.length){toast('مفيش زبائن مطلبوش من '+days+' يوم','var(--amber)');return;}
+  phones.sort(function(a,b){ return map[a].localeCompare(map[b]); });
+  showPhonesList('مطلبوش من '+days+' يوم', phones);
+}
+
+// ===== Streets =====
+function addStreet(){
+  const name=(document.getElementById('new-street').value||'').trim();
+  if(!name)return;
+  if(!D.streets.includes(name)){D.streets.push(name);saveData();}
+  document.getElementById('new-street').value='';
+  renderStreets();
+  toast('تم إضافة الشارع ✓');
+}
+
+function deleteStreet(s){
+  D.streets=D.streets.filter(x=>x!==s);
+  saveData();renderStreets();
+}
+
+function renderStreets(){
+  const el=document.getElementById('streets-list');
+  if(!el)return;
+  el.innerHTML=D.streets.map(s=>`<div style="display:inline-flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--bord);border-radius:20px;padding:3px 10px;font-size:12px;">
+    <span>${s}</span>
+    <button onclick="deleteStreet('${s}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;line-height:1;">×</button>
+  </div>`).join('');
+}
+
+// ===== Settings =====
+function saveSettings(){
+  D.settings.fee1=parseFloat(document.getElementById('fee1').value)||20;
+  D.settings.fee2=parseFloat(document.getElementById('fee2').value)||25;
+  D.settings.fee3=parseFloat(document.getElementById('fee3').value)||30;
+  D.settings.fee4=parseFloat(document.getElementById('fee4').value)||35;
+  D.settings.feeOut=parseFloat(document.getElementById('fee-out').value)||40;
+  saveData();toast('تم حفظ الإعدادات ✓');
+}
+
+function loadSettingsUI(){
+  document.getElementById('fee1').value=D.settings.fee1||20;
+  document.getElementById('fee2').value=D.settings.fee2||25;
+  document.getElementById('fee3').value=D.settings.fee3||30;
+  document.getElementById('fee4').value=D.settings.fee4||35;
+  document.getElementById('fee-out').value=D.settings.feeOut||40;
+  renderStreets();
+  renderCatsList();
+}
+
+// ===== Customers =====
+function renderCustomers(){
+  const srch=(document.getElementById('srch-cust').value||'').toLowerCase();
+  const fcat=document.getElementById('flt-cat').value;
+  const frank=document.getElementById('flt-rank').value;
+  const fper=document.getElementById('flt-period').value;
+  const ftFrom=document.getElementById('flt-tf').value;
+  const ftTo=document.getElementById('flt-tt').value;
+
+  // نبني فهرس أوردرات كل رقم مرة واحدة بس (بدل ما نلف على D.orders لكل زبون على حدة)
+  const map={};
+  D.orders.forEach(o=>{
+    if(!map[o.phone])map[o.phone]={phone:o.phone,count:0,lastDate:null,lastText:'',lastTs:null,ords:[]};
+    map[o.phone].count++;
+    map[o.phone].ords.push(o);
+    if(!map[o.phone].lastDate||o.date>map[o.phone].lastDate){map[o.phone].lastDate=o.date;map[o.phone].lastText=o.text||'';map[o.phone].lastTs=o.ts;}
+  });
+  const compCountByPhone={};
+  D.complaints.forEach(x=>{compCountByPhone[x.phone]=(compCountByPhone[x.phone]||0)+1;});
+  // الرانك بيتحسب مرة واحدة لكل رقم مش في كل حتة محتاجينه فيها
+  const rankByPhone={};
+  Object.keys(map).forEach(p=>{rankByPhone[p]=getRank(p,map[p].ords);});
+
+  let list=Object.values(map).map(c=>({...c,...D.customers[c.phone],phone:c.phone,count:c.count,lastDate:c.lastDate,lastText:c.lastText,rank:rankByPhone[c.phone]}));
+  if(srch)list=list.filter(c=>(c.phone||'').includes(srch)||(c.name||'').toLowerCase().includes(srch)||(c.address||'').toLowerCase().includes(srch)||(c.category||'').includes(srch)||(c.lastText||'').toLowerCase().includes(srch));
+  if(fcat!=='all')list=list.filter(c=>(c.category||'فرد')===fcat);
+  if(frank!=='all')list=list.filter(c=>c.rank.label===frank);
+  if(fper!=='all'){const d=parseInt(fper);list=list.filter(c=>daysDiff(c.lastDate)>=d);}
+  if(ftFrom||ftTo){list=list.filter(c=>map[c.phone].ords.some(o=>{const t=fmtTime(o.ts);if(ftFrom&&ftTo)return t>=ftFrom&&t<=ftTo;if(ftFrom)return t>=ftFrom;return t<=ftTo;}));}
+
+  list.sort((a,b)=>(daysDiff(b.lastDate)||999)-(daysDiff(a.lastDate)||999));
+
+  const all=Object.keys(map);
+  document.getElementById('c-total').textContent=all.length;
+  document.getElementById('c-vip').textContent=all.filter(p=>rankByPhone[p].label==='مميز').length;
+  document.getElementById('c-lost').textContent=all.filter(p=>rankByPhone[p].label==='مفقود').length;
+  const wkAgo=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
+  const oldP=new Set(D.orders.filter(o=>o.date<wkAgo).map(o=>o.phone));
+  document.getElementById('c-new7').textContent=[...new Set(D.orders.filter(o=>o.date>=wkAgo).map(o=>o.phone))].filter(p=>!oldP.has(p)).length;
+  document.getElementById('today-cnt').textContent=[...new Set(D.orders.filter(o=>o.date===today()).map(o=>o.phone))].length;
+
+  const tb=document.getElementById('cust-tb');
+  if(!list.length){tb.innerHTML='<tr><td colspan="10" class="empty">مفيش نتايج</td></tr>';return;}
+
+  // لتخفيف الجهاز، بنعرض أحدث 300 بس افتراضيًا؛ زرار "اعرض الكل" بيفك القيد
+  const CAP=300;
+  const showAll=window._custShowAll===true;
+  let capNote='';
+  let shownList=list;
+  if(!showAll && list.length>CAP){
+    shownList=list.slice(0,CAP);
+    capNote='<tr><td colspan="10" style="text-align:center;padding:10px;color:var(--txt2);font-size:12px;">بيعرض أحدث '+CAP+' من أصل '+list.length+' — <a href="#" onclick="window._custShowAll=true;renderCustomers();return false;" style="color:var(--acc);">اعرض الكل</a></td></tr>';
+  }
+  tb.innerHTML=shownList.map(c=>{
+    const d=daysDiff(c.lastDate);
+    const cat=c.category||'فرد';
+    const comps=compCountByPhone[c.phone]||0;
+    const action=c.rank.label==='مفقود'?'<span style="color:var(--red);font-size:11px;font-weight:700">اتصل</span>':c.rank.label==='ضعيف'?'<span style="color:var(--amber);font-size:11px">تابع</span>':'—';
+    return`<tr>
+      <td><a href="#" onclick="showProfile('${c.phone}');return false;" style="color:var(--acc);text-decoration:none;font-weight:600">${c.name||'—'}</a></td>
+      <td dir="ltr" style="font-size:11px">${c.phone}</td>
+      <td><span class="cat-badge cat-${cat}">${cat}</span></td>
+      <td><span class="badge ${c.rank.cls}">${c.rank.label}</span></td>
+      <td style="text-align:center">${c.count}</td>
+      <td>${fmtD(c.lastDate)}</td>
+      <td style="text-align:center;color:${d>30?'var(--red)':d>7?'var(--amber)':'var(--green)'}">${d!==null?d:'—'}</td>
+      <td style="font-size:11px">${c.address||'—'}</td>
+      <td>${comps?`<span class="comp-badge">${comps}</span>`:'—'}</td>
+      <td>${action}</td>
+    </tr>`;
+  }).join('')+capNote;
+}
+
+function copyTodayPhones(){
+  // كل رقم يتكرر بعدد مرات طلبه النهارده
+  var todayOrders=D.orders.filter(function(o){return o.date===today();});
+  var phones=todayOrders.map(function(o){return o.phone;});
+  if(!phones.length){toast('مفيش أوردرات النهارده','var(--amber)');return;}
+  showPhonesList('أرقام النهارده', phones);
+}
+
+function getSentToday(){
+  try{
+    var data=JSON.parse(localStorage.getItem('fk6_sent_'+today())||'[]');
+    return data;
+  }catch(e){return [];}
+}
+
+function markSent(phone){
+  var sent=getSentToday();
+  if(sent.indexOf(phone)<0){
+    sent.push(phone);
+    localStorage.setItem('fk6_sent_'+today(),JSON.stringify(sent));
+  }
+}
+
+function buildChunkButtons(phones){
+  var html='';
+  var chunkSize=10;
+  var numChunks=Math.ceil(phones.length/chunkSize);
+  for(var c=0;c<numChunks;c++){
+    var start=c*chunkSize;
+    var end=Math.min(start+chunkSize,phones.length);
+    html+='<button class="btn btn-blue btn-sm chunk-btn" data-start="'+start+'" data-end="'+end+'">'+(start+1)+'-'+end+'</button>';
+  }
+  html+='<button class="btn btn-acc btn-sm" id="copy-all-ph">كوبي الكل ('+phones.length+')</button>';
+  return html;
+}
+
+function showPhonesList(title, phones){
+  var sent=getSentToday();
+  var rows='';
+  for(var i=0;i<phones.length;i++){
+    var p=phones[i];
+    var cd=D.customers[p]||{};
+    var cnt=D.orders.filter(function(o){return o.phone===p&&o.date===today();}).length;
+    var isSent=sent.indexOf(p)>=0;
+    var bg=isSent?'background:rgba(46,204,113,.08);':'';
+    rows+='<div class="phone-row" data-phone="'+p+'" style="display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid var(--bord);border-radius:6px;'+bg+'">';
+    rows+='<span style="color:var(--acc);font-size:13px;font-weight:700;min-width:28px;">'+(i+1)+'.</span>';
+    rows+='<div style="flex:1;">';
+    if(cd.name) rows+='<div style="font-size:12px;font-weight:600;color:var(--txt2);">'+cd.name+'</div>';
+    rows+='<span class="wa-num" data-phone="'+p+'" style="font-size:15px;color:var(--green);direction:ltr;display:inline-block;text-decoration:none;font-weight:700;cursor:pointer;">'+p+'</span>';
+    rows+='</div>';
+    rows+='<span class="sent-mark" data-phone="'+p+'" style="font-size:16px;min-width:24px;text-align:center;">'+(isSent?'✅':'')+'</span>';
+    rows+='<span style="font-size:11px;color:var(--txt2);">'+cnt+' أوردر</span>';
+    rows+='</div>';
+  }
+  var numberedTxt='';
+  for(var k=0;k<phones.length;k++){ numberedTxt+=(k+1)+'. '+phones[k]+'\n'; }
+  var plainTxt=phones.join('\n');
+
+  var sentCount=sent.filter(function(s){return phones.indexOf(s)>=0;}).length;
+
+  document.getElementById('modal-title').textContent=title+' ('+phones.length+')';
+  document.getElementById('modal-body').innerHTML=
+    '<div style="margin-bottom:8px;">'
+    +'<div style="font-size:12px;color:var(--txt2);margin-bottom:6px;">دوس على الرقم يفتح واتساب ✅ | خد الأرقام كل 10 كوبي:</div>'
+    +'<div id="chunk-buttons" style="display:flex;gap:6px;flex-wrap:wrap;">'+buildChunkButtons(phones)+'</div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;background:var(--surf2);border-radius:7px;padding:6px 10px;">'
+    +'<span style="font-size:12px;"><span id="sent-counter" style="color:var(--green);font-weight:700;">'+sentCount+'</span> / '+phones.length+' اتبعتلهم</span>'
+    +'<button class="btn btn-sm" id="reset-sent" style="background:rgba(231,76,60,.1);color:var(--red);border-color:rgba(231,76,60,.3);">مسح العلامات</button>'
+    +'</div>'
+    +'<div id="phones-list-rows" style="max-height:400px;overflow-y:auto;">'+rows+'</div>';
+  document.getElementById('profile-modal').classList.add('open');
+
+  document.getElementById('copy-all-ph').onclick=function(){
+    navigator.clipboard.writeText(plainTxt).then(function(){toast('تم كوبي '+phones.length+' رقم ✓');}).catch(function(){prompt('',plainTxt);});
+  };
+  // أزرار كل 10
+  var chunkBtns=document.querySelectorAll('.chunk-btn');
+  chunkBtns.forEach(function(btn){
+    btn.onclick=function(){
+      var start=parseInt(this.getAttribute('data-start'));
+      var end=parseInt(this.getAttribute('data-end'));
+      var chunk=phones.slice(start,end);
+      navigator.clipboard.writeText(chunk.join('\n'))
+        .then(function(){toast('تم كوبي '+chunk.length+' رقم ('+(start+1)+'-'+end+') ✓');})
+        .catch(function(){prompt('',chunk.join('\n'));});
+    };
+  });
+  document.getElementById('reset-sent').onclick=function(){
+    if(confirm('تمسح علامات اللي اتبعتلهم النهارده؟')){
+      localStorage.removeItem('fk6_sent_'+today());
+      showPhonesList(title,phones);
+    }
+  };
+
+  // الضغط على الرقم يفتح واتساب ويتعلم عليه
+  document.getElementById('phones-list-rows').addEventListener('click',function(e){
+    var el=e.target.closest('.wa-num');
+    if(el){
+      var ph=el.getAttribute('data-phone');
+      markSent(ph);
+      // علّم في الواجهة
+      var mark=document.querySelector('.sent-mark[data-phone="'+ph+'"]');
+      if(mark) mark.textContent='✅';
+      var row=document.querySelector('.phone-row[data-phone="'+ph+'"]');
+      if(row) row.style.background='rgba(46,204,113,.08)';
+      // حدّث العداد
+      var sentNow=getSentToday().filter(function(s){return phones.indexOf(s)>=0;}).length;
+      var counter=document.getElementById('sent-counter');
+      if(counter) counter.textContent=sentNow;
+      // افتح واتساب
+      window.open('https://wa.me/2'+ph,'_blank');
+    }
+  });
+}
+function copyMonthPhones(){
+  const phones=[...new Set(D.orders.filter(o=>o.date&&o.date.startsWith(thisMonth())).map(o=>o.phone))];
+  if(!phones.length){toast('مفيش أوردرات','var(--amber)');return;}
+  navigator.clipboard.writeText(phones.join('\n')).then(()=>toast(`تم كوبي ${phones.length} رقم ✓`)).catch(()=>prompt('الأرقام:',phones.join('\n')));
+}
+
+// ===== Profile =====
+function showProfile(phone){
+  const c=D.customers[phone]||{};
+  const ords=D.orders.filter(o=>o.phone===phone).sort((a,b)=>b.ts.localeCompare(a.ts));
+  const comps=D.complaints.filter(x=>x.phone===phone);
+  const rank=getRank(phone);
+  const totalFee=ords.reduce((a,o)=>a+o.fee,0);
+  let html=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--acc)">${ords.length}</div><div style="font-size:11px;color:var(--txt2)">طلبات</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--acc)">${totalFee}ج</div><div style="font-size:11px;color:var(--txt2)">إجمالي التوصيل</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><span class="badge ${rank.cls}">${rank.label}</span></div>
+  </div>`;
+  if(comps.length){
+    html+=`<div style="margin-bottom:10px;"><div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:5px">⚠️ شكاوى (${comps.length})</div>`;
+    comps.forEach(x=>{html+=`<div style="background:rgba(231,76,60,.08);border-radius:6px;padding:5px 8px;margin-bottom:4px;font-size:11px;color:var(--txt2)">${fmtD(x.date)} | ${x.type} | ${x.note||'—'}</div>`;});
+    html+='</div>';
+  }
+  html+=`<div style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:6px">آخر الطلبات</div><div style="max-height:200px;overflow-y:auto;">`;
+  ords.slice(0,15).forEach(o=>{html+=`<div style="background:var(--surf2);border-radius:6px;padding:6px 8px;margin-bottom:3px;font-size:11px;display:flex;justify-content:space-between;gap:6px;"><span style="color:var(--txt2);white-space:nowrap">${fmtDT(o.ts)}</span><span style="color:var(--txt);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.text}</span><span style="color:var(--acc);font-weight:700;white-space:nowrap">${o.fee}ج</span></div>`;});
+  html+='</div>';
+  document.getElementById('modal-title').textContent=(c.name||phone);
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('profile-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('profile-modal').classList.remove('open');}
+
+// ===== Riders =====
+function compressImage(file,cb){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var maxW=480;
+      var scale=Math.min(1,maxW/img.width);
+      var w=Math.max(1,Math.round(img.width*scale)), h=Math.max(1,Math.round(img.height*scale));
+      var canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      var ctx=canvas.getContext('2d');
+      ctx.drawImage(img,0,0,w,h);
+      try{cb(canvas.toDataURL('image/jpeg',0.65));}catch(err){cb('');}
+    };
+    img.onerror=function(){cb('');};
+    img.src=e.target.result;
+  };
+  reader.onerror=function(){cb('');};
+  reader.readAsDataURL(file);
+}
+
+(function(){
+  var photoInp=document.getElementById('new-rider-photo');
+  if(photoInp){
+    photoInp.addEventListener('change',function(){
+      var f=this.files&&this.files[0];
+      var prev=document.getElementById('new-rider-photo-preview');
+      if(!f){prev.innerHTML='';return;}
+      prev.innerHTML='<span style="font-size:11px;color:var(--txt2);">جارِ التجهيز...</span>';
+      compressImage(f,function(dataUrl){
+        prev.innerHTML=dataUrl?'<img src="'+dataUrl+'" style="width:34px;height:34px;object-fit:cover;border-radius:7px;border:1px solid var(--bord);vertical-align:middle;">':'<span style="font-size:11px;color:var(--red);">فشل تحميل الصورة</span>';
+      });
+    });
+  }
+})();
+
+function addRider(){
+  const name=(document.getElementById('new-rider-name').value||'').trim();
+  const pct=parseFloat(document.getElementById('new-rider-pct').value)||30;
+  const phone=(document.getElementById('new-rider-phone').value||'').trim();
+  const shift=document.getElementById('new-rider-shift').value||'day';
+  if(!name){toast('اكتب اسم المندوب','var(--amber)');return;}
+  if(D.riders.find(r=>r.name===name)){toast('موجود بالفعل','var(--amber)');return;}
+  const fileInp=document.getElementById('new-rider-photo');
+  const file=fileInp&&fileInp.files&&fileInp.files[0];
+  function finishAdd(photoData){
+    D.riders.push({id:Date.now(),name,pct,phone,photo:photoData||'',regDate:today(),status:'active',shift});
+    saveData();refreshRiderSelects();renderRiderStats();renderRidersRegistry();
+    document.getElementById('new-rider-name').value='';
+    document.getElementById('new-rider-phone').value='';
+    if(fileInp) fileInp.value='';
+    var prev=document.getElementById('new-rider-photo-preview');
+    if(prev) prev.innerHTML='';
+    toast('تم إضافة المندوب ✓');
+  }
+  if(file){
+    compressImage(file,function(dataUrl){finishAdd(dataUrl);});
+  }else{
+    finishAdd('');
+  }
+}
+
+function toggleRiderStatus(id){
+  const r=D.riders.find(x=>x.id===id);
+  if(!r)return;
+  r.status = r.status==='left' ? 'active' : 'left';
+  saveData();renderRidersRegistry();renderRiderStats();
+}
+function toggleRiderShift(id){
+  const r=D.riders.find(x=>x.id===id);
+  if(!r)return;
+  r.shift = r.shift==='night' ? 'day' : 'night';
+  saveData();renderRidersRegistry();
+}
+function viewRiderPhoto(id){
+  const r=D.riders.find(x=>x.id===id);
+  if(!r||!r.photo)return;
+  document.getElementById('modal-title').textContent='صورة بطاقة '+r.name;
+  document.getElementById('modal-body').innerHTML='<div style="text-align:center;"><img src="'+r.photo+'" style="max-width:100%;border-radius:10px;"></div>';
+  document.getElementById('profile-modal').classList.add('open');
+}
+
+function renderRidersRegistry(){
+  const wrap=document.getElementById('riders-registry');
+  if(!wrap)return;
+  const totalEl=document.getElementById('riders-count-total');
+  const activeEl=document.getElementById('riders-count-active');
+  const leftEl=document.getElementById('riders-count-left');
+  if(!D.riders.length){
+    wrap.innerHTML='<div class="empty">لسه معملتش مناديب</div>';
+    if(totalEl)totalEl.textContent='0';
+    if(activeEl)activeEl.textContent='0';
+    if(leftEl)leftEl.textContent='0';
+    return;
+  }
+  const sorted=[...D.riders].sort((a,b)=>(a.status==='left'?1:0)-(b.status==='left'?1:0)||a.name.localeCompare(b.name,'ar'));
+  let activeN=0,leftN=0;
+  wrap.innerHTML=sorted.map(r=>{
+    const isLeft=r.status==='left';
+    if(isLeft)leftN++;else activeN++;
+    const isNight=r.shift==='night';
+    const photoHtml=r.photo
+      ?`<img src="${r.photo}" onclick="viewRiderPhoto(${r.id})" style="width:52px;height:52px;object-fit:cover;border-radius:9px;border:1px solid var(--bord);cursor:pointer;flex-shrink:0;">`
+      :`<div style="width:52px;height:52px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--txt2);flex-shrink:0;">👤</div>`;
+    return`<div class="rider-reg-card" style="opacity:${isLeft?'.65':'1'}">
+      <div style="display:flex;gap:10px;align-items:center;">
+        ${photoHtml}
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.name}</div>
+          <div style="font-size:11px;color:var(--txt2);direction:ltr;text-align:right;">${r.phone||'—'}</div>
+          <div style="font-size:10px;color:var(--txt2);margin-top:2px;">اتسجل: ${fmtD(r.regDate||'')}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center;">
+        <span class="badge ${isLeft?'b-lost':'b-good'}" style="cursor:pointer;" onclick="toggleRiderStatus(${r.id})">${isLeft?'⛔ مشي':'✅ شغال'}</span>
+        <span class="badge ${isNight?'b-vip':'b-ok'}" style="cursor:pointer;" onclick="toggleRiderShift(${r.id})">${isNight?'🌙 بليل':'☀️ بالنهار'}</span>
+        <button class="btn btn-sm btn-red" style="margin-right:auto;" onclick="deleteRider(${r.id})">حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+  if(totalEl)totalEl.textContent=D.riders.length;
+  if(activeEl)activeEl.textContent=activeN;
+  if(leftEl)leftEl.textContent=leftN;
+}
+
+function refreshRiderSelects(){
+  var sorted=[...D.riders].sort(function(a,b){return a.name.localeCompare(b.name,'ar');});
+  ['cell-rider','comp-rider','chat-file-rider'].forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    const cur=sel.value;
+    sel.innerHTML='<option value="">بدون مندوب</option>'+sorted.map(r=>`<option value="${r.name}" ${r.name===cur?'selected':''}>${r.name}</option>`).join('');
+  });
+}
+
+function renderRiderStats(){
+  const period=document.getElementById('rider-period').value;
+  const df=document.getElementById('rider-df').value;
+  const dt=document.getElementById('rider-dt').value;
+  const now=Date.now();
+  function filterO(ords){return ords.filter(o=>{
+    if(df&&dt)return o.date>=df&&o.date<=dt;
+    if(df)return o.date>=df;
+    if(dt)return o.date<=dt;
+    if(period==='today')return o.date===today();
+    if(period==='week'){const w=new Date(now-7*864e5).toISOString().slice(0,10);return o.date>=w;}
+    if(period==='month')return o.date&&o.date.startsWith(thisMonth());
+    return true;
+  });}
+  const tb=document.getElementById('riders-tb');
+  if(!D.riders.length){tb.innerHTML='<tr><td colspan="7" class="empty">أضف مناديب أولاً</td></tr>';return;}
+
+  let grandTotal=0, grandOffice=0, grandRider=0;
+  const rows = D.riders.map(r=>{
+    const ords=filterO(D.orders.filter(o=>o.rider===r.name));
+    const total=ords.reduce((a,o)=>a+o.fee,0);
+    const rShare=Math.round(total*r.pct/100);
+    const oShare=total-rShare;
+    grandTotal+=total; grandOffice+=oShare; grandRider+=rShare;
+    return`<tr>
+      <td style="font-weight:600"><a href="#" onclick="showRiderOrders('${r.name}');return false;" style="color:var(--acc);text-decoration:none;">${r.name}</a></td>
+      <td style="text-align:center">${ords.length}</td>
+      <td>${total}ج</td>
+      <td><input type="number" value="${r.pct}" style="width:55px;font-size:11px;padding:3px 5px;" onchange="updateRiderPct(${r.id},this.value)">%</td>
+      <td style="color:var(--green);font-weight:600">${oShare}ج</td>
+      <td style="color:var(--amber)">${rShare}ج</td>
+      <td><button class="btn btn-sm btn-red" onclick="deleteRider(${r.id})">حذف</button></td>
+    </tr>`;
+  }).join('');
+
+  // صف الإجمالي
+  const totalRow=`<tr style="background:var(--surf2);border-top:2px solid var(--acc);">
+    <td style="font-weight:700;color:var(--acc)">الإجمالي</td>
+    <td style="text-align:center;font-weight:700">${filterO(D.orders.filter(o=>D.riders.map(r=>r.name).includes(o.rider))).length}</td>
+    <td style="font-weight:700">${grandTotal}ج</td>
+    <td>—</td>
+    <td style="color:var(--green);font-weight:700;font-size:14px">${grandOffice}ج</td>
+    <td style="color:var(--amber);font-weight:700">${grandRider}ج</td>
+    <td></td>
+  </tr>`;
+
+  tb.innerHTML = rows + totalRow;
+}
+
+function updateRiderPct(id,val){const r=D.riders.find(x=>x.id===id);if(r){r.pct=parseFloat(val)||30;saveData();renderRiderStats();}}
+function deleteRider(id){if(!confirm('تمسح المندوب؟'))return;D.riders=D.riders.filter(r=>r.id!==id);saveData();refreshRiderSelects();renderRiderStats();renderRidersRegistry();}
+
+// ===== قفل صفحة التصفية بباسورد =====
+function renderSettleGate(){
+  var unlocked=sessionStorage.getItem('fk6_settle_unlocked')==='1';
+  var lockEl=document.getElementById('settle-lock');
+  var contentEl=document.getElementById('settle-content');
+  if(!lockEl||!contentEl)return;
+  if(unlocked){
+    lockEl.style.display='none';
+    contentEl.style.display='block';
+    refreshSettleRiderSelect();
+    renderSettleDay();
+    renderSettleMonth();
+    renderWallet();
+  }else{
+    lockEl.style.display='block';
+    contentEl.style.display='none';
+    var pi=document.getElementById('settle-pass-input');
+    if(pi)pi.value='';
+    var err=document.getElementById('settle-pass-err');
+    if(err)err.textContent='';
+    var hasPass=!!(D.settings.settlePass);
+    document.getElementById('settle-pass-title').textContent=hasPass?'🔒 الصفحة محمية بباسورد':'🔒 اعمل باسورد لحماية الصفحة';
+    document.getElementById('settle-pass-hint').textContent=hasPass?'':'أول مرة هنا - اللي هتكتبه دلوقتي هيبقى الباسورد بتاعك';
+  }
+}
+function checkSettlePassword(){
+  var input=(document.getElementById('settle-pass-input').value||'');
+  var err=document.getElementById('settle-pass-err');
+  if(!D.settings.settlePass){
+    if(input.length<3){err.textContent='اكتب باسورد 3 حروف أو أرقام على الأقل';return;}
+    D.settings.settlePass=input;
+    saveData();
+    sessionStorage.setItem('fk6_settle_unlocked','1');
+    renderSettleGate();
+    toast('تم حفظ الباسورد ✓');
+    return;
+  }
+  if(input===D.settings.settlePass){
+    sessionStorage.setItem('fk6_settle_unlocked','1');
+    renderSettleGate();
+  }else{
+    err.textContent='الباسورد غلط';
+    document.getElementById('settle-pass-input').value='';
+  }
+}
+function lockSettlePage(){
+  sessionStorage.removeItem('fk6_settle_unlocked');
+  renderSettleGate();
+}
+function changeSettlePassword(){
+  var oldP=prompt('اكتب الباسورد الحالي:');
+  if(oldP===null)return;
+  if(oldP!==(D.settings.settlePass||'')){toast('الباسورد الحالي غلط','var(--red)');return;}
+  var newP=prompt('اكتب الباسورد الجديد:');
+  if(newP===null)return;
+  if(!newP||newP.length<3){toast('الباسورد لازم 3 حروف على الأقل','var(--amber)');return;}
+  D.settings.settlePass=newP;
+  saveData();
+  toast('تم تغيير الباسورد ✓');
+}
+
+function quickAddSettleRider(){
+  const name=(document.getElementById('qs-rider-name').value||'').trim();
+  const phone=(document.getElementById('qs-rider-phone').value||'').trim();
+  const pct=parseFloat(document.getElementById('qs-rider-pct').value)||30;
+  if(!name){toast('اكتب اسم المندوب','var(--amber)');return;}
+  if(D.riders.find(r=>r.name===name)){toast('موجود بالفعل','var(--amber)');return;}
+  D.riders.push({id:Date.now(),name,pct,phone,photo:'',regDate:today(),status:'active',shift:'day'});
+  saveData();
+  refreshRiderSelects();
+  refreshSettleRiderSelect();
+  renderRidersRegistry();
+  var sel=document.getElementById('settle-rider');
+  if(sel)sel.value=name;
+  document.getElementById('qs-rider-name').value='';
+  document.getElementById('qs-rider-phone').value='';
+  toast('تم إضافة المندوب ✓');
+}
+
+// ===== تصفية المناديب =====
+function refreshSettleRiderSelect(){
+  var sel=document.getElementById('settle-rider');
+  if(!sel)return;
+  var sorted=[...D.riders].sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+  var cur=sel.value;
+  sel.innerHTML='<option value="">اختر مندوب</option>'+sorted.map(r=>`<option value="${r.name}" ${r.name===cur?'selected':''}>${r.name}</option>`).join('');
+}
+
+function addSettlement(){
+  var riderSel=document.getElementById('settle-rider');
+  var rider=riderSel.value;
+  var amount=parseFloat(document.getElementById('settle-amount').value)||0;
+  var note=(document.getElementById('settle-note').value||'').trim();
+  var dayEl=document.getElementById('settle-day-pick');
+  var date=(dayEl&&dayEl.value)||today();
+  if(!rider){toast('اختار المندوب','var(--amber)');return;}
+  if(!amount&&!note){toast('اكتب المبلغ أو ملاحظة','var(--amber)');return;}
+  D.settlements.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),date,rider,amount,note,done:false,doneAt:'',createdAt:new Date().toISOString()});
+  saveData();
+  document.getElementById('settle-amount').value='';
+  document.getElementById('settle-note').value='';
+  renderSettleDay();
+  renderSettleMonth();
+  toast('تم تسجيل التصفية ✓');
+}
+
+function addBulkSettlement(){
+  var amount=parseFloat(document.getElementById('settle-bulk-amount').value)||0;
+  var note=(document.getElementById('settle-bulk-note').value||'').trim();
+  var dayEl=document.getElementById('settle-day-pick');
+  var date=(dayEl&&dayEl.value)||today();
+  if(!amount){toast('اكتب المبلغ','var(--amber)');return;}
+  var now=new Date().toISOString();
+  D.settlements.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),date,rider:'تصفية مجمعة (كل المناديب)',amount,note,done:true,doneAt:now,createdAt:now});
+  D.wallet.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),kind:'settle_bulk',amount,note,date,createdAt:now});
+  saveData();
+  document.getElementById('settle-bulk-amount').value='';
+  document.getElementById('settle-bulk-note').value='';
+  renderSettleDay();
+  renderSettleMonth();
+  renderWallet();
+  toast('تم تسجيل التصفية الكبيرة، ودخلت في التصفيات والربح ✓');
+}
+
+function markSettleDone(id){
+  var s=D.settlements.find(x=>x.id===id);
+  if(!s)return;
+  s.done=true;s.doneAt=new Date().toISOString();
+  saveData();renderSettleDay();renderSettleMonth();
+}
+function undoSettleDone(id){
+  var s=D.settlements.find(x=>x.id===id);
+  if(!s)return;
+  s.done=false;s.doneAt='';
+  saveData();renderSettleDay();renderSettleMonth();
+}
+function deleteSettlement(id){
+  if(!confirm('تمسح التصفية دي؟'))return;
+  D.settlements=D.settlements.filter(x=>x.id!==id);
+  saveData();renderSettleDay();renderSettleMonth();
+}
+
+function shiftSettleDay(delta){
+  var el=document.getElementById('settle-day-pick');
+  if(!el)return;
+  var val=el.value||today();
+  var d=new Date(val+'T00:00:00');
+  d.setDate(d.getDate()+delta);
+  el.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  renderSettleDay();
+}
+
+function renderSettleDay(){
+  var dayEl=document.getElementById('settle-day-pick');
+  var tb=document.getElementById('settle-tb');
+  if(!dayEl||!tb)return;
+  if(!dayEl.value) dayEl.value=today();
+  var d=dayEl.value;
+  var rows=D.settlements.filter(s=>s.date===d).sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||''));
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="7" class="empty">لسه مفيش تصفيات في اليوم ده</td></tr>';
+    return;
+  }
+  var total=0;
+  var html=rows.map(s=>{
+    total+=(s.amount||0);
+    var statusHtml=s.done
+      ?`<span class="badge b-good" style="cursor:pointer;" onclick="undoSettleDone('${s.id}')">✅ اتصفى</span>`
+      :`<span class="badge b-weak" style="cursor:pointer;" onclick="markSettleDone('${s.id}')">⏳ لسه</span>`;
+    var doneBtn=s.done?'':`<button class="btn btn-sm btn-green" onclick="markSettleDone('${s.id}')">تم</button>`;
+    return`<tr>
+      <td style="font-weight:600">${s.rider}</td>
+      <td style="color:var(--acc);font-weight:700">${s.amount||0}ج</td>
+      <td style="font-size:11px;color:var(--txt2);">${s.note||'—'}</td>
+      <td>${statusHtml}</td>
+      <td style="font-size:11px;">${s.createdAt?fmtDT(s.createdAt):'—'}</td>
+      <td style="font-size:11px;color:var(--green);">${s.doneAt?fmtDT(s.doneAt):'—'}</td>
+      <td style="display:flex;gap:4px;">${doneBtn}<button class="btn btn-sm btn-red" onclick="deleteSettlement('${s.id}')">حذف</button></td>
+    </tr>`;
+  }).join('');
+  html+=`<tr style="background:var(--surf2);border-top:2px solid var(--acc);">
+    <td style="font-weight:700;color:var(--acc)">الإجمالي</td>
+    <td style="font-weight:700;color:var(--acc)">${total}ج</td>
+    <td colspan="5"></td>
+  </tr>`;
+  tb.innerHTML=html;
+}
+
+function renderSettleMonth(){
+  var mEl=document.getElementById('settle-month-pick');
+  var out=document.getElementById('settle-month-summary');
+  if(!mEl||!out)return;
+  if(!mEl.value) mEl.value=thisMonth();
+  var m=mEl.value;
+  var rows=D.settlements.filter(s=>(s.date||'').startsWith(m));
+  if(!rows.length){
+    out.innerHTML='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:14px;">مفيش تصفيات في الشهر ده</div>';
+    return;
+  }
+  var total=0,doneTotal=0,pendingTotal=0,doneCount=0;
+  rows.forEach(s=>{
+    total+=(s.amount||0);
+    if(s.done){doneTotal+=(s.amount||0);doneCount++;}
+    else pendingTotal+=(s.amount||0);
+  });
+  var byRider={};
+  rows.forEach(s=>{
+    if(!byRider[s.rider])byRider[s.rider]={count:0,total:0};
+    byRider[s.rider].count++;
+    byRider[s.rider].total+=(s.amount||0);
+  });
+  var riderRows=Object.entries(byRider).sort((a,b)=>b[1].total-a[1].total).map(([name,v])=>
+    `<tr><td>${name}</td><td style="text-align:center">${v.count}</td><td style="color:var(--acc);font-weight:600">${v.total}ج</td></tr>`
+  ).join('');
+  out.innerHTML=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;">
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:19px;font-weight:700;color:var(--acc);">${rows.length}</div><div style="font-size:11px;color:var(--txt2);">عدد التصفيات</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:19px;font-weight:700;color:var(--acc);">${total}ج</div><div style="font-size:11px;color:var(--txt2);">إجمالي المبالغ</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:19px;font-weight:700;color:var(--green);">${doneTotal}ج</div><div style="font-size:11px;color:var(--txt2);">اتصفى (${doneCount})</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:19px;font-weight:700;color:var(--amber);">${pendingTotal}ج</div><div style="font-size:11px;color:var(--txt2);">لسه معلق</div></div>
+  </div>
+  <div class="twrap"><table><thead><tr><th>المندوب</th><th>عدد التصفيات</th><th>الإجمالي</th></tr></thead><tbody>${riderRows}</tbody></table></div>`;
+}
+
+// ===== محفظة إنستاباي وفودافون كاش =====
+function addWalletEarn(){
+  const kind=document.getElementById('wallet-earn-type').value||'instapay';
+  const amount=parseFloat(document.getElementById('wallet-earn-amount').value)||0;
+  const note=(document.getElementById('wallet-earn-note').value||'').trim();
+  const dEl=document.getElementById('wallet-earn-date');
+  const date=(dEl&&dEl.value)||today();
+  if(!amount){toast('اكتب المبلغ','var(--amber)');return;}
+  D.wallet.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),kind,amount,note,date,createdAt:new Date().toISOString()});
+  saveData();
+  document.getElementById('wallet-earn-amount').value='';
+  document.getElementById('wallet-earn-note').value='';
+  renderWallet();
+  toast('تم تسجيل الكسب ✓');
+}
+function addWalletWithdraw(){
+  const amount=parseFloat(document.getElementById('wallet-wd-amount').value)||0;
+  const note=(document.getElementById('wallet-wd-note').value||'').trim();
+  const dEl=document.getElementById('wallet-wd-date');
+  const date=(dEl&&dEl.value)||today();
+  if(!amount){toast('اكتب مبلغ السحب','var(--amber)');return;}
+  D.wallet.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),kind:'withdraw',amount,note,date,createdAt:new Date().toISOString()});
+  saveData();
+  document.getElementById('wallet-wd-amount').value='';
+  document.getElementById('wallet-wd-note').value='';
+  renderWallet();
+  toast('تم تسجيل السحب ✓');
+}
+function deleteWalletEntry(id){
+  if(!confirm('تمسح الحركة دي؟'))return;
+  D.wallet=D.wallet.filter(w=>w.id!==id);
+  saveData();renderWallet();
+}
+function walletKindLabel(kind){
+  if(kind==='instapay')return'إنستاباي';
+  if(kind==='vf')return'فودافون كاش';
+  if(kind==='credit')return'شحن رصيد';
+  if(kind==='ads')return'إعلانات';
+  if(kind==='settle_bulk')return'تصفية مناديب';
+  return'سحب';
+}
+function walletKindBadgeClass(kind){
+  if(kind==='instapay')return'b-ok';
+  if(kind==='vf')return'b-vip';
+  if(kind==='credit')return'b-weak';
+  if(kind==='ads')return'b-gray';
+  if(kind==='settle_bulk')return'b-good';
+  return'b-lost';
+}
+function renderWallet(){
+  const statsEl=document.getElementById('wallet-stats');
+  const tb=document.getElementById('wallet-tb');
+  if(!statsEl||!tb)return;
+  const fromEl=document.getElementById('wallet-range-from');
+  const toEl=document.getElementById('wallet-range-to');
+  const from=(fromEl&&fromEl.value)||'';
+  const to=(toEl&&toEl.value)||'';
+  let rows, labelEl=document.getElementById('wallet-stats-label');
+  if(from||to){
+    rows=D.wallet.filter(w=>{
+      if(from&&to)return w.date>=from&&w.date<=to;
+      if(from)return w.date>=from;
+      return w.date<=to;
+    });
+  }else{
+    const mEl=document.getElementById('settle-month-pick');
+    const m=(mEl&&mEl.value)||thisMonth();
+    rows=D.wallet.filter(w=>(w.date||'').startsWith(m));
+  }
+  rows=rows.sort((a,b)=>(b.date||'').localeCompare(a.date||'')||(b.createdAt||'').localeCompare(a.createdAt||''));
+  let insta=0,vf=0,credit=0,ads=0,settleBulk=0,wd=0;
+  rows.forEach(w=>{
+    if(w.kind==='instapay')insta+=(w.amount||0);
+    else if(w.kind==='vf')vf+=(w.amount||0);
+    else if(w.kind==='credit')credit+=(w.amount||0);
+    else if(w.kind==='ads')ads+=(w.amount||0);
+    else if(w.kind==='settle_bulk')settleBulk+=(w.amount||0);
+    else wd+=(w.amount||0);
+  });
+  const net=insta+vf+credit+ads+settleBulk-wd;
+  const rangeNote=(from||to)?`<div style="font-size:11px;color:var(--acc);margin-bottom:6px;">📅 من ${from?fmtD(from):'الأول'} لحد ${to?fmtD(to):'دلوقتي'}</div>`:'';
+  statsEl.innerHTML=rangeNote+`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--blue);">${insta}ج</div><div style="font-size:11px;color:var(--txt2);">إنستاباي</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--purple);">${vf}ج</div><div style="font-size:11px;color:var(--txt2);">فودافون كاش</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--amber);">${credit}ج</div><div style="font-size:11px;color:var(--txt2);">شحن رصيد</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--acc);">${ads}ج</div><div style="font-size:11px;color:var(--txt2);">إعلانات</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--green);">${settleBulk}ج</div><div style="font-size:11px;color:var(--txt2);">تصفية مناديب</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:18px;font-weight:700;color:var(--red);">${wd}ج</div><div style="font-size:11px;color:var(--txt2);">إجمالي المسحوب</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;grid-column:span 2;"><div style="font-size:20px;font-weight:700;color:var(--green);">${net}ج</div><div style="font-size:11px;color:var(--txt2);">الصافي المتبقي</div></div>
+  </div>`;
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="5" class="empty">مفيش حركات في الفترة دي</td></tr>';
+    return;
+  }
+  tb.innerHTML=rows.map(w=>`<tr>
+    <td style="font-size:11px;">${fmtD(w.date)}</td>
+    <td><span class="badge ${walletKindBadgeClass(w.kind)}">${walletKindLabel(w.kind)}</span></td>
+    <td style="font-weight:700;color:${w.kind==='withdraw'?'var(--red)':'var(--green)'};">${w.kind==='withdraw'?'-':'+'}${w.amount}ج</td>
+    <td style="font-size:11px;color:var(--txt2);">${w.note||'—'}</td>
+    <td><button class="btn btn-sm btn-red" onclick="deleteWalletEntry('${w.id}')">حذف</button></td>
+  </tr>`).join('');
+}
+
+// ===== History =====
+function renderHistory(){
+  const srch=(document.getElementById('srch-hist').value||'').toLowerCase();
+  const exact=document.getElementById('flt-exact').value;
+  const df=document.getElementById('flt-from').value;
+  const dt=document.getElementById('flt-to').value;
+  const per=document.getElementById('flt-hp').value;
+  let list=D.orders.filter(o=>{
+    const ms=!srch||(o.phone||'').includes(srch)||(o.name||'').toLowerCase().includes(srch)||(o.text||'').toLowerCase().includes(srch)||(o.rider||'').toLowerCase().includes(srch);
+    let md=true;
+    if(exact)md=o.date===exact;
+    else if(df&&dt)md=o.date>=df&&o.date<=dt;
+    else if(df)md=o.date>=df;
+    else if(dt)md=o.date<=dt;
+    else if(per==='today')md=o.date===today();
+    else if(per==='week'){const w=new Date(Date.now()-7*864e5).toISOString().slice(0,10);md=o.date>=w;}
+    else if(per==='month')md=o.date&&o.date.startsWith(thisMonth());
+    return ms&&md;
+  }).slice().reverse();
+  const tb=document.getElementById('hist-tb');
+  if(!list.length){tb.innerHTML='<tr><td colspan="8" class="empty">مفيش أوردرات</td></tr>';return;}
+
+  // لتخفيف الجهاز، بنعرض أحدث 300 بس افتراضيًا لو مفيش فلتر بيضيّق النتايج؛ زرار "اعرض الكل" بيفك القيد
+  const CAP=300;
+  const showAll=window._histShowAll===true;
+  let capNote='';
+  let shownList=list;
+  if(!showAll && list.length>CAP){
+    shownList=list.slice(0,CAP);
+    capNote='<tr><td colspan="8" style="text-align:center;padding:10px;color:var(--txt2);font-size:12px;">بيعرض أحدث '+CAP+' من أصل '+list.length+' — <a href="#" onclick="window._histShowAll=true;renderHistory();return false;" style="color:var(--acc);">اعرض الكل</a></td></tr>';
+  }
+  tb.innerHTML=shownList.map(o=>`<tr>
+    <td style="white-space:nowrap;font-size:11px">${fmtDT(o.ts)}</td>
+    <td>${o.name||'—'}</td>
+    <td dir="ltr" style="font-size:11px">${o.phone}</td>
+    <td style="font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.text||'—'}</td>
+    <td style="font-size:11px">${o.address||'—'}</td>
+    <td>${o.rider||'—'}</td>
+    <td>${o.fee}ج</td>
+    <td><button class="btn btn-sm btn-red" onclick="delOrder('${o.id}')">حذف</button> <button class="btn btn-sm btn-blue" onclick="showPrintModal('${o.id}')">🖨️</button> <button class="btn btn-sm" onclick="editOrderFee('${o.id}')" style="background:rgba(243,156,18,.15);color:var(--amber);border-color:rgba(243,156,18,.3);">تعديل السعر</button></td>
+  </tr>`).join('')+capNote;
+}
+
+function updateHistStats(){
+  const tod=D.orders.filter(o=>o.date===today());
+  const mon=D.orders.filter(o=>o.date&&o.date.startsWith(thisMonth()));
+  document.getElementById('h-today').textContent=tod.length;
+  document.getElementById('h-month').textContent=mon.length;
+}
+
+function delOrder(id){
+  if(!confirm('تمسح الأوردر؟'))return;
+  D.orders=D.orders.filter(o=>o.id!==id);
+  saveData();renderHistory();updateHistStats();
+}
+
+// ===== Complaints =====
+function addComplaint(){
+  const phone=(document.getElementById('comp-phone').value||'').trim();
+  const rider=document.getElementById('comp-rider').value;
+  const type=document.getElementById('comp-type').value;
+  const note=(document.getElementById('comp-note').value||'').trim();
+  if(!phone){toast('اكتب رقم الزبون','var(--amber)');return;}
+  D.complaints.push({id:Date.now(),phone,rider,type,note,date:today(),ts:new Date().toISOString()});
+  saveData();renderComplaints();
+  document.getElementById('comp-phone').value='';
+  document.getElementById('comp-note').value='';
+  toast('تم حفظ الشكوى ✓');
+}
+
+function renderComplaints(){
+  const tb=document.getElementById('comp-tb');
+  const list=D.complaints.slice().reverse();
+  if(!list.length){tb.innerHTML='<tr><td colspan="6" class="empty">مفيش شكاوى</td></tr>';return;}
+  tb.innerHTML=list.map(c=>{
+    const cd=D.customers[c.phone]||{};
+    return`<tr>
+      <td style="font-size:11px;white-space:nowrap">${fmtD(c.date)}</td>
+      <td>${cd.name||c.phone}</td>
+      <td>${c.rider||'—'}</td>
+      <td><span class="comp-badge">${c.type}</span></td>
+      <td style="font-size:11px;max-width:180px">${c.note||'—'}</td>
+      <td><button class="btn btn-sm btn-red" onclick="delComp(${c.id})">حذف</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function delComp(id){D.complaints=D.complaints.filter(c=>c.id!==id);saveData();renderComplaints();}
+
+// ===== Backup =====
+function updateBackupStats(){
+  document.getElementById('bk-orders').textContent=D.orders.length;
+  document.getElementById('bk-custs').textContent=Object.keys(D.customers).length;
+  document.getElementById('bk-riders').textContent=D.riders.length;
+  document.getElementById('bk-comps').textContent=D.complaints.length;
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='فركة_كعب_بيانات_'+today()+'.json';
+  a.click();
+  localStorage.setItem('fk6_last_backup',today());
+  document.getElementById('backup-alert').style.display='none';
+  toast('تم تحميل النسخة الاحتياطية ✓');
+}
+
+function importData(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const imp=JSON.parse(ev.target.result);
+      if(!confirm(`هتستعيد ${imp.orders?.length||0} أوردر و${Object.keys(imp.customers||{}).length} زبون. متأكد؟`))return;
+      D={...D,...imp};saveData();
+      toast('تم استعادة البيانات ✓');updateBackupStats();
+    }catch(err){toast('ملف غلط!','var(--red)');}
+  };
+  reader.readAsText(file);
+}
+
+function showMonthReport(){
+  const month=document.getElementById('rpt-month').value;
+  if(!month){toast('اختر الشهر','var(--amber)');return;}
+  const ords=D.orders.filter(o=>o.date&&o.date.startsWith(month));
+  const total=ords.reduce((a,o)=>a+o.fee,0);
+  const phones=new Set(ords.map(o=>o.phone));
+  const riderMap={};
+  ords.forEach(o=>{const r=o.rider||'غير محدد';if(!riderMap[r])riderMap[r]={count:0,fee:0};riderMap[r].count++;riderMap[r].fee+=o.fee;});
+  let html=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--acc)">${ords.length}</div><div style="font-size:11px;color:var(--txt2)">أوردرات</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--acc)">${total}ج</div><div style="font-size:11px;color:var(--txt2)">إجمالي التوصيل</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:var(--acc)">${phones.size}</div><div style="font-size:11px;color:var(--txt2)">زبون مختلف</div></div>
+  </div><div class="twrap"><table><thead><tr><th>المندوب</th><th>الأوردرات</th><th>إجمالي التوصيل</th><th>صافي المكتب</th><th>نصيبه</th></tr></thead><tbody>`;
+  Object.entries(riderMap).forEach(([name,v])=>{
+    const pct=D.riders.find(r=>r.name===name)?.pct||30;
+    html+=`<tr><td>${name}</td><td style="text-align:center">${v.count}</td><td>${v.fee}ج</td><td style="color:var(--green)">${Math.round(v.fee*(1-pct/100))}ج</td><td style="color:var(--amber)">${Math.round(v.fee*pct/100)}ج</td></tr>`;
+  });
+  html+='</tbody></table></div>';
+  document.getElementById('month-report').innerHTML=html;
+}
+
+// ===== Alerts =====
+function renderAlerts(){
+  const days   = parseInt(document.getElementById('alert-period').value)||30;
+  const tfFrom = document.getElementById('alert-tf').value;
+  const tfTo   = document.getElementById('alert-tt').value;
+  const now    = Date.now();
+  const cutoff = new Date(now - days*864e5).toISOString().slice(0,10);
+  const monthMs= 30*864e5;
+
+  // Build phone map
+  const map={};
+  D.orders.forEach(o=>{
+    if(!map[o.phone]) map[o.phone]={phone:o.phone,count:0,lastDate:null,times:[]};
+    map[o.phone].count++;
+    if(!map[o.phone].lastDate||o.date>map[o.phone].lastDate) map[o.phone].lastDate=o.date;
+    map[o.phone].times.push(fmtTime(o.ts));
+  });
+
+  let list = Object.values(map).filter(c=>{
+    // كان منتظم: طلب 4+ في شهر معين
+    const wasRegular = D.orders.filter(o=>o.phone===c.phone&&now-new Date(o.ts).getTime()<monthMs*3).length >= 4;
+    // وقف منذ فترة
+    const stopped = c.lastDate < cutoff;
+    return wasRegular && stopped;
+  });
+
+  // فلتر بالوقت لو محدد
+  if(tfFrom||tfTo){
+    list = list.filter(c=>{
+      return c.times.some(t=>{
+        if(tfFrom&&tfTo) return t>=tfFrom&&t<=tfTo;
+        if(tfFrom) return t>=tfFrom;
+        return t<=tfTo;
+      });
+    });
+  }
+
+  list.sort((a,b)=>b.lastDate.localeCompare(a.lastDate));
+
+  window._alertPhones = list.map(c=>c.phone);
+
+  const tb=document.getElementById('alerts-tb');
+  if(!list.length){tb.innerHTML='<tr><td colspan="7" class="empty">مفيش زبائن في الوصف ده 🎉</td></tr>';return;}
+
+  tb.innerHTML=list.map(c=>{
+    const cd=D.customers[c.phone]||{};
+    const d=daysDiff(c.lastDate);
+    // أكثر وقت متكرر
+    const timeCounts={};
+    c.times.forEach(t=>{const h=t.slice(0,2);timeCounts[h]=(timeCounts[h]||0)+1;});
+    const topHour=Object.entries(timeCounts).sort((a,b)=>b[1]-a[1])[0];
+    const usualTime=topHour?topHour[0]+':00 - '+topHour[0]+':59':'—';
+    return`<tr>
+      <td style="font-weight:600;color:var(--acc)">${cd.name||'—'}</td>
+      <td dir="ltr" style="font-size:11px">${c.phone}</td>
+      <td><span class="cat-badge cat-${cd.category||'فرد'}">${cd.category||'فرد'}</span></td>
+      <td style="text-align:center">${c.count}</td>
+      <td>${fmtD(c.lastDate)}</td>
+      <td style="text-align:center;color:var(--red);font-weight:600">${d} يوم</td>
+      <td style="font-size:11px;color:var(--amber)">${usualTime}</td>
+    </tr>`;
+  }).join('');
+}
+
+function copyAlertPhones(){
+  const phones = window._alertPhones||[];
+  if(!phones.length){toast('مفيش أرقام','var(--amber)');return;}
+  navigator.clipboard.writeText(phones.join('\n'))
+    .then(()=>toast(`تم كوبي ${phones.length} رقم ✓`))
+    .catch(()=>prompt('الأرقام:',phones.join('\n')));
+}
+
+// ===== Print Invoice =====
+function showPrintModal(orderId){
+  const o = D.orders.find(x=>x.id===orderId);
+  if(!o) return;
+  const cd = D.customers[o.phone]||{};
+  // فصّل الطلب لعناصر منفصلة
+  const items = (o.text||'').split(/[\n،,\/]+/).map(s=>s.trim()).filter(s=>s.length>1);
+  const itemsHtml = items.map((item,idx)=>`
+    <tr>
+      <td style="padding:6px 8px;border-bottom:1px solid #ddd;font-size:12px;">${idx+1}. ${item}</td>
+      <td style="padding:6px 8px;border-bottom:1px solid #ddd;width:80px;text-align:center;">........</td>
+    </tr>`).join('');
+
+  const html=`
+  <div id="invoice-print" style="font-family:'Cairo',sans-serif;color:#000;padding:10px;direction:rtl;max-width:320px;">
+    <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:10px;">
+      <div style="font-size:20px;font-weight:700;">فركة كعب</div>
+      <div style="font-size:11px;color:#555;">خدمة توصيل سريعة - الحامول</div>
+    </div>
+    <table style="width:100%;font-size:12px;margin-bottom:8px;border-collapse:collapse;">
+      <tr><td style="padding:3px 0;font-weight:600;">التاريخ:</td><td>${fmtDT(o.ts)}</td></tr>
+      <tr><td style="padding:3px 0;font-weight:600;">الاسم:</td><td>${o.name||cd.name||'—'}</td></tr>
+      <tr><td style="padding:3px 0;font-weight:600;">الموبايل:</td><td dir="ltr">${o.phone}</td></tr>
+      <tr><td style="padding:3px 0;font-weight:600;">الشارع:</td><td>${o.address||'—'}</td></tr>
+      <tr><td style="padding:3px 0;font-weight:600;">المندوب:</td><td>${o.rider||'—'}</td></tr>
+    </table>
+    <div style="border:1px solid #000;border-radius:4px;overflow:hidden;margin-bottom:10px;">
+      <div style="background:#000;color:#fff;padding:5px 8px;font-size:12px;font-weight:700;display:flex;justify-content:space-between;">
+        <span>البند</span><span>السعر</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;">
+        ${itemsHtml}
+        <tr style="background:#f9f9f9;">
+          <td style="padding:6px 8px;font-weight:700;font-size:13px;">رسوم التوصيل</td>
+          <td style="padding:6px 8px;text-align:center;font-weight:700;">${o.fee} ج</td>
+        </tr>
+        <tr style="border-top:2px solid #000;">
+          <td style="padding:8px;font-weight:700;font-size:14px;">الإجمالي</td>
+          <td style="padding:8px;text-align:center;font-size:14px;font-weight:700;">.........</td>
+        </tr>
+      </table>
+    </div>
+    <div style="text-align:center;font-size:10px;color:#888;">شكراً لاستخدامك فركة كعب 🚀 | واتساب: 01033253032</div>
+  </div>`;
+  document.getElementById('print-content').innerHTML=html;
+  document.getElementById('print-modal').classList.add('open');
+}
+
+function printInvoice(){
+  const content = document.getElementById('invoice-print');
+  if(!content) return;
+  const w = window.open('','_blank','width=380,height=650');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>body{font-family:'Cairo',sans-serif;margin:10px;direction:rtl;}@media print{body{margin:0;}}</style>
+    </head><body>${content.innerHTML}</body></html>`);
+  w.document.close();
+  setTimeout(()=>{w.print();},600);
+}
+
+// ===== Rider Daily Orders Modal =====
+function showRiderOrders(riderName){
+  const date = document.getElementById('rider-df').value || today();
+  const ords = D.orders.filter(o=>o.rider===riderName && o.date===date)
+    .sort((a,b)=>a.ts.localeCompare(b.ts));
+  const total = ords.reduce((a,o)=>a+o.fee,0);
+  const r = D.riders.find(x=>x.name===riderName)||{pct:30};
+  const rShare = Math.round(total*r.pct/100);
+
+  let html=`<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+    <div style="background:var(--surf2);border-radius:8px;padding:8px 14px;text-align:center;flex:1;">
+      <div style="font-size:20px;font-weight:700;color:var(--acc)">${ords.length}</div>
+      <div style="font-size:11px;color:var(--txt2)">أوردرات</div>
+    </div>
+    <div style="background:var(--surf2);border-radius:8px;padding:8px 14px;text-align:center;flex:1;">
+      <div style="font-size:20px;font-weight:700;color:var(--acc)">${total}ج</div>
+      <div style="font-size:11px;color:var(--txt2)">إجمالي التوصيل</div>
+    </div>
+    <div style="background:var(--surf2);border-radius:8px;padding:8px 14px;text-align:center;flex:1;">
+      <div style="font-size:20px;font-weight:700;color:var(--amber)">${rShare}ج</div>
+      <div style="font-size:11px;color:var(--txt2)">نصيبه</div>
+    </div>
+  </div>`;
+
+  if(!ords.length){
+    html+='<div style="text-align:center;padding:20px;color:var(--txt2)">مفيش أوردرات في التاريخ ده</div>';
+  } else {
+    html+=`<div style="max-height:350px;overflow-y:auto;">`;
+    ords.forEach((o,i)=>{
+      html+=`<div style="background:var(--surf2);border-radius:8px;padding:8px 10px;margin-bottom:6px;font-size:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+          <span style="font-weight:700;color:var(--acc)">${i+1}.</span>
+          <span style="color:var(--txt2);font-size:11px">${fmtTime(o.ts)}</span>
+          <span style="color:var(--green);font-weight:700">${o.fee}ج</span>
+        </div>
+        <div style="color:var(--txt2)">${o.name||o.phone} | ${o.address||'—'}</div>
+        <div style="color:var(--txt);margin-top:2px;font-size:11px">${(o.text||'').slice(0,60)}</div>
+      </div>`;
+    });
+    html+='</div>';
+  }
+
+  document.getElementById('modal-title').textContent=`أوردرات ${riderName} - ${fmtD(date)}`;
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('profile-modal').classList.add('open');
+}
+
+function editOrderFee(id){
+  const o=D.orders.find(x=>x.id===id);
+  if(!o) return;
+  const newFee=prompt(`السعر الحالي: ${o.fee} جنيه\nاكتب السعر الجديد:`,o.fee);
+  if(newFee===null) return;
+  const val=parseFloat(newFee);
+  if(isNaN(val)||val<0){toast('سعر غير صحيح','var(--red)');return;}
+  o.fee=val;
+  saveData();renderHistory();updateHistStats();
+  toast(`تم تعديل السعر إلى ${val} جنيه ✓`);
+}
+
+function copyCatPhones(){
+  const cat=document.getElementById('copy-cat-sel').value;
+  const phones=[...new Set(
+    Object.entries(D.customers)
+      .filter(([p,c])=>(c.category||'فرد')===cat)
+      .map(([p])=>p)
+  )];
+  if(!phones.length){toast(`مفيش زبائن في تصنيف ${cat}`,'var(--amber)');return;}
+  navigator.clipboard.writeText(phones.join('\n'))
+    .then(()=>toast(`تم كوبي ${phones.length} رقم من ${cat} ✓`))
+    .catch(()=>prompt(`أرقام ${cat}:`,phones.join('\n')));
+}
+
+function copyDatePhones(){
+  const date=document.getElementById('copy-date-sel').value;
+  if(!date){toast('اختر التاريخ الأول','var(--amber)');return;}
+  const phones=[...new Set(D.orders.filter(o=>o.date===date).map(o=>o.phone))];
+  if(!phones.length){toast('مفيش أوردرات في التاريخ ده','var(--amber)');return;}
+  navigator.clipboard.writeText(phones.join('\n'))
+    .then(()=>toast(`تم كوبي ${phones.length} رقم ليوم ${fmtD(date)} ✓`))
+    .catch(()=>prompt('الأرقام:',phones.join('\n')));
+}
+
+function showDayIncome(){
+  const date=document.getElementById('copy-date-sel').value||today();
+  const ords=D.orders.filter(o=>o.date===date);
+  if(!ords.length){toast('مفيش أوردرات في اليوم ده','var(--amber)');return;}
+  const total=ords.reduce((a,o)=>a+o.fee,0);
+  const riderMap={};
+  ords.forEach(o=>{
+    const r=o.rider||'غير محدد';
+    if(!riderMap[r])riderMap[r]={count:0,fee:0};
+    riderMap[r].count++;riderMap[r].fee+=o.fee;
+  });
+  let html=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--acc)">${ords.length}</div><div style="font-size:11px;color:var(--txt2)">أوردرات</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--acc)">${total}ج</div><div style="font-size:11px;color:var(--txt2)">إجمالي التوصيل</div></div>
+    <div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:22px;font-weight:700;color:var(--green)">${[...new Set(ords.map(o=>o.phone))].length}</div><div style="font-size:11px;color:var(--txt2)">زبون مختلف</div></div>
+  </div>
+  <div style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:6px;">تفصيل المناديب</div>`;
+  Object.entries(riderMap).forEach(([name,v])=>{
+    const r=D.riders.find(x=>x.name===name)||{pct:30};
+    const off=Math.round(v.fee*(1-r.pct/100));
+    html+=`<div style="background:var(--surf2);border-radius:7px;padding:7px 10px;margin-bottom:5px;display:flex;justify-content:space-between;font-size:12px;">
+      <span style="font-weight:600">${name}</span>
+      <span>${v.count} أوردر</span>
+      <span style="color:var(--acc)">${v.fee}ج</span>
+      <span style="color:var(--green)">صافيك: ${off}ج</span>
+    </div>`;
+  });
+  document.getElementById('modal-title').textContent=`إيراد يوم ${fmtD(date)}`;
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('profile-modal').classList.add('open');
+}
+
+
+function getRankByMonth(phone){
+  var now=Date.now(), mo=30*864e5;
+  var ords=D.orders.filter(function(o){return o.phone===phone;});
+  if(!ords.length) return 'مفقود';
+  var lm=ords.filter(function(o){return now-new Date(o.ts).getTime()<mo;}).length;
+  var lw=ords.filter(function(o){return now-new Date(o.ts).getTime()<7*864e5;}).length;
+  if(lw>=4) return 'مميز';
+  if(lw>=2) return 'كويس';
+  if(lw>=1) return 'عادي';
+  if(lm>=1) return 'ضعيف';
+  return 'مفقود';
+}
+
+function copyRankPhones(rankLabel){
+  var phoneSet={};
+  var lastDateMap={};
+  D.orders.forEach(function(o){
+    phoneSet[o.phone]=true;
+    if(!lastDateMap[o.phone]||o.date>lastDateMap[o.phone]) lastDateMap[o.phone]=o.date;
+  });
+  var allPhones=Object.keys(phoneSet);
+  var phones=allPhones.filter(function(p){
+    var total=D.orders.filter(function(o){return o.phone===p;}).length;
+    var daysSince=daysDiff(lastDateMap[p]);
+    // مفقود = مطلبش من أكتر من 30 يوم (بغض النظر عن عدد أوردراته)
+    if(rankLabel==='مفقود') return daysSince>30;
+    if(rankLabel==='مميز') return total>=5;
+    if(rankLabel==='كويس') return total>=3 && total<5;
+    if(rankLabel==='عادي') return total===2;
+    if(rankLabel==='ضعيف') return total===1;
+    return false;
+  });
+  if(!phones.length){ toast('مفيش زبائن في تصنيف '+rankLabel,'var(--amber)'); return; }
+  var txt=phones.join('\n');
+  var msg='تم كوبي '+phones.length+' رقم ✓';
+  document.getElementById('modal-title').textContent='أرقام '+rankLabel+' ('+phones.length+')';
+  var btnHtml='<button class="btn btn-acc btn-sm" id="copy-rank-btn">كوبي الكل</button>';
+  var listHtml='<div style="background:var(--surf2);border-radius:8px;padding:12px;max-height:400px;overflow-y:auto;font-size:14px;direction:ltr;text-align:left;line-height:2.2;user-select:text;cursor:text;white-space:pre;font-family:monospace;">'+phones.join('\n')+'</div>';
+  document.getElementById('modal-body').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span style="font-size:12px;color:var(--txt2);">'+phones.length+' رقم</span>'+btnHtml+'</div>'+listHtml;
+  document.getElementById('profile-modal').classList.add('open');
+  document.getElementById('copy-rank-btn').onclick=function(){
+    navigator.clipboard.writeText(txt).then(function(){toast(msg);}).catch(function(){prompt('الأرقام:',txt);});
+  };
+}
+
+
+// ===== المنقطعون =====
+function renderLost(){
+  var days=parseInt(document.getElementById('lost-days').value)||30;
+  var minOrders=parseInt(document.getElementById('lost-min-orders').value)||2;
+  var cutoff=new Date(Date.now()-days*864e5).toISOString().slice(0,10);
+
+  // ابني map لكل زبون
+  var map={};
+  D.orders.forEach(function(o){
+    if(!map[o.phone]) map[o.phone]={phone:o.phone,count:0,lastDate:null,firstDate:null,lastTs:null};
+    map[o.phone].count++;
+    if(!map[o.phone].lastDate||o.date>map[o.phone].lastDate){
+      map[o.phone].lastDate=o.date;
+      map[o.phone].lastTs=o.ts;
+    }
+    if(!map[o.phone].firstDate||o.date<map[o.phone].firstDate){
+      map[o.phone].firstDate=o.date;
+    }
+  });
+
+  var list=Object.values(map).filter(function(c){
+    return c.count>=minOrders && c.lastDate<=cutoff;
+  });
+
+  list.sort(function(a,b){return a.lastDate.localeCompare(b.lastDate);});
+
+  window._lostPhones=list.map(function(c){return c.phone;});
+  var countEl=document.getElementById('lost-count');
+  if(countEl) countEl.textContent='النتيجة: '+list.length+' زبون';
+
+  // تحديث الـ tab عشان يبين العدد
+  var tab=document.getElementById('lost-tab');
+  if(tab) tab.textContent='المنقطعون 🔴 ('+list.length+')';
+
+  var tb=document.getElementById('lost-tb');
+  if(!list.length){
+    tb.innerHTML='<tr><td colspan="9" class="empty">مفيش زبائن منقطعين في الفترة دي 🎉</td></tr>';
+    return;
+  }
+
+  tb.innerHTML=list.map(function(c){
+    var cd=D.customers[c.phone]||{};
+    var d=daysDiff(c.lastDate);
+    var cat=cd.category||'فرد';
+    var note=cd.note||'';
+    var waLink='https://wa.me/2'+c.phone.replace(/^0/,'');
+    return '<tr>'
+      +'<td style="font-weight:600;color:var(--acc);">'+(cd.name||'—')+'</td>'
+      +'<td dir="ltr" style="font-size:11px;">'+c.phone+'</td>'
+      +'<td><span class="cat-badge cat-'+cat+'">'+cat+'</span></td>'
+      +'<td style="text-align:center;font-weight:600;">'+c.count+'</td>'
+      +'<td style="color:var(--red);">'+fmtD(c.lastDate)+'</td>'
+      +'<td style="text-align:center;color:var(--red);font-weight:700;">'+d+' يوم</td>'
+      +'<td style="color:var(--txt2);font-size:11px;">'+fmtD(c.firstDate)+'</td>'
+      +'<td><input value="'+(note||'')+'" data-phone="'+c.phone+'" class="note-input" placeholder="ملاحظة..." style="font-size:11px;padding:3px 6px;width:120px;background:var(--surf2);border:1px solid var(--bord);border-radius:5px;color:var(--txt);"></td>'
+      +'<td><a href="'+waLink+'" target="_blank" class="btn btn-sm btn-green">واتساب</a></td>'
+      +'</tr>';
+  }).join('');
+
+  // event listener لحفظ الملاحظات
+  setTimeout(function(){
+    var inputs=document.querySelectorAll('.note-input');
+    inputs.forEach(function(inp){
+      inp.addEventListener('change',function(){
+        saveNote(this.getAttribute('data-phone'),this.value);
+      });
+    });
+  },100);
+}
+
+function saveNote(phone, note){
+  if(!D.customers[phone]) D.customers[phone]={};
+  D.customers[phone].note=note;
+  saveData();
+}
+
+function copyLostPhones(){
+  var phones=window._lostPhones||[];
+  if(!phones.length){toast('مفيش أرقام','var(--amber)');return;}
+  var txt=phones.join('\n');
+  navigator.clipboard.writeText(txt)
+    .then(function(){toast('تم كوبي '+phones.length+' رقم ✓');})
+    .catch(function(){prompt('الأرقام:',txt);});
+}
+
+
+function distributePhones(){
+  var raw=document.getElementById('phones-paste').value.trim();
+  if(!raw){toast('الصق الأرقام الأول','var(--amber)');return;}
+
+  // استخرج الأرقام
+  var phones=[];
+  var lines=raw.split(/[\n\r,،\s]+/);
+  lines.forEach(function(line){
+    var p=line.trim();
+    // تنظيف الرقم
+    p=p.replace(/[^0-9+]/g,'');
+    if(p.startsWith('+20')) p='0'+p.slice(3);
+    if(p.startsWith('20')&&p.length===12) p='0'+p.slice(2);
+    if(p.length===11&&p.startsWith('01')) phones.push(p);
+    else if(p.length===10&&p.startsWith('1')) phones.push('0'+p);
+  });
+
+  // ازل المكرر
+  var unique=[];
+  phones.forEach(function(p){if(unique.indexOf(p)<0)unique.push(p);});
+
+  if(!unique.length){
+    toast('مفيش أرقام صحيحة','var(--amber)');
+    return;
+  }
+
+  if(unique.length>CELL_COUNT){
+    toast('الأرقام أكتر من '+CELL_COUNT+' - هيتوزع أول '+CELL_COUNT+' بس','var(--amber)');
+  }
+
+  // امسح الخلايا الأول
+  for(var i=0;i<CELL_COUNT;i++){
+    var el=document.getElementById('cell-'+i);
+    var chk=document.getElementById('cchk-'+i);
+    var wrap=document.getElementById('cwrap-'+i);
+    if(el) el.value='';
+    if(chk) chk.checked=false;
+    if(wrap) wrap.classList.remove('selected');
+  }
+
+  // وزّع الأرقام على الخلايا
+  var count=Math.min(unique.length,CELL_COUNT);
+  for(var j=0;j<count;j++){
+    var cell=document.getElementById('cell-'+j);
+    if(cell){
+      cell.value=unique[j];
+      autocheckCell(j);
+    }
+  }
+
+  saveCells();
+
+  var msg=document.getElementById('distribute-msg');
+  if(msg){
+    msg.innerHTML='<span style="color:var(--green);">✓ تم توزيع '+count+' رقم على الخلايا</span>';
+    setTimeout(function(){msg.innerHTML='';},3000);
+  }
+
+  document.getElementById('phones-paste').value='';
+  // scroll للخلايا
+  document.getElementById('cells-grid').scrollIntoView({behavior:'smooth'});
+  toast('تم توزيع '+count+' رقم ✓');
+}
+
+
+function showDataStats(){
+  var totalOrders=D.orders.length;
+  var uniquePhones={};
+  var byMonth={};
+  var byDate={};
+  var invalidPhones=0;
+
+  D.orders.forEach(function(o){
+    // أرقام فريدة
+    uniquePhones[o.phone]=true;
+    // تحقق من صحة الرقم
+    if(!o.phone||!/^01[0-9]\d{8}$/.test(o.phone)) invalidPhones++;
+    // حسب الشهر
+    if(o.date){
+      var m=o.date.slice(0,7);
+      if(!byMonth[m]) byMonth[m]={orders:0,phones:{}};
+      byMonth[m].orders++;
+      byMonth[m].phones[o.phone]=true;
+      // حسب اليوم
+      if(!byDate[o.date]) byDate[o.date]=0;
+      byDate[o.date]++;
+    }
+  });
+
+  var uniqueCount=Object.keys(uniquePhones).length;
+  var custCount=Object.keys(D.customers).length;
+
+  var html='<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">'
+    +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--acc);">'+totalOrders+'</div><div style="font-size:11px;color:var(--txt2);">إجمالي الأوردرات (بالتكرار)</div></div>'
+    +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--green);">'+uniqueCount+'</div><div style="font-size:11px;color:var(--txt2);">أرقام فريدة (بدون تكرار)</div></div>'
+    +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--blue);">'+custCount+'</div><div style="font-size:11px;color:var(--txt2);">زبائن مسجلين بأسماء</div></div>'
+    +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:22px;font-weight:700;color:'+(invalidPhones>0?'var(--red)':'var(--green)')+';">'+invalidPhones+'</div><div style="font-size:11px;color:var(--txt2);">أرقام غلط/ناقصة</div></div>'
+    +'</div>';
+
+  html+='<div style="font-size:12px;color:var(--txt2);background:rgba(245,166,35,.1);border-radius:8px;padding:10px;margin-bottom:12px;line-height:1.8;">'
+    +'<strong style="color:var(--acc);">مهم:</strong> "كوبي أرقام الشهر" بيجيب <strong>الأرقام الفريدة</strong> يعني لو زبون طلب 10 مرات بيظهر مرة واحدة. عشان كده العدد أقل من إجمالي الأوردرات.'
+    +'</div>';
+
+  html+='<div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:8px;">تفصيل الشهور:</div>';
+  html+='<div class="twrap"><table><thead><tr><th>الشهر</th><th>عدد الأوردرات</th><th>أرقام فريدة</th></tr></thead><tbody>';
+  var months=Object.keys(byMonth).sort().reverse();
+  months.forEach(function(m){
+    var uniqueInMonth=Object.keys(byMonth[m].phones).length;
+    html+='<tr><td>'+m+'</td><td style="text-align:center;">'+byMonth[m].orders+'</td><td style="text-align:center;color:var(--green);">'+uniqueInMonth+'</td></tr>';
+  });
+  html+='</tbody></table></div>';
+
+  document.getElementById('data-stats').innerHTML=html;
+  toast('تم فحص البيانات ✓');
+}
+
+
+// ===== Dashboard =====
+function renderDashboard(){
+  var tod=today();
+  var mon=thisMonth();
+  var yr=thisYear();
+  var todOrders=D.orders.filter(function(o){return o.date===tod;});
+  var monOrders=D.orders.filter(function(o){return o.date&&o.date.indexOf(mon)===0;});
+  var yearOrders=D.orders.filter(function(o){return o.date&&o.date.indexOf(yr)===0;});
+  var AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  var curMonthName=AR_MONTHS[new Date().getMonth()];
+  var mLbl=document.getElementById('db-month-lbl'); if(mLbl) mLbl.textContent='أوردرات الشهر ('+curMonthName+')';
+  var yLbl=document.getElementById('db-year-lbl'); if(yLbl) yLbl.textContent='أوردرات السنة ('+yr+')';
+  document.getElementById('db-year').textContent=yearOrders.length;
+
+  // يوم معين — تنقل سهل بين الأيام
+  var dpEl=document.getElementById('db-day-pick');
+  if(dpEl&&!dpEl.value) dpEl.value=tod;
+  renderDayPick();
+
+  // إحصائيات علوية
+  document.getElementById('db-today').textContent=todOrders.length;
+  var yDate=new Date(Date.now()-864e5);
+  var yStr=yDate.getFullYear()+'-'+String(yDate.getMonth()+1).padStart(2,'0')+'-'+String(yDate.getDate()).padStart(2,'0');
+  document.getElementById('db-yest').textContent=D.orders.filter(function(o){return o.date===yStr;}).length;
+
+  // ===== أوردرات فترة معينة =====
+  var rFrom=document.getElementById('db-range-from').value;
+  var rTo=document.getElementById('db-range-to').value;
+  var rEl=document.getElementById('db-range-result');
+  if(!rFrom&&!rTo){
+    rEl.innerHTML='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:12px;">حدد التاريخ من وإلى عشان تشوف أوردرات الفترة</div>';
+  } else {
+    var rOrders=D.orders.filter(function(o){
+      if(!o.date) return false;
+      if(rFrom&&o.date<rFrom) return false;
+      if(rTo&&o.date>rTo) return false;
+      return true;
+    });
+    if(!rOrders.length){
+      rEl.innerHTML='<div style="color:var(--amber);font-size:12px;text-align:center;padding:12px;">مفيش أوردرات في الفترة دي</div>';
+    } else {
+      var rFee=rOrders.reduce(function(a,o){return a+o.fee;},0);
+      var rCust={}; rOrders.forEach(function(o){rCust[o.phone]=1;});
+      var rDays={}; rOrders.forEach(function(o){rDays[o.date]=(rDays[o.date]||0)+1;});
+      var nDays=Object.keys(rDays).length;
+      var rRiders={};
+      rOrders.forEach(function(o){ var r=o.rider||'غير محدد'; rRiders[r]=(rRiders[r]||0)+1; });
+      var rArr=Object.keys(rRiders).map(function(k){return {n:k,v:rRiders[k]};}).sort(function(a,b){return b.v-a.v;});
+      var h='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;">'
+        +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--acc);">'+rOrders.length+'</div><div style="font-size:11px;color:var(--txt2);">أوردر</div></div>'
+        +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--green);">'+rFee+' ج</div><div style="font-size:11px;color:var(--txt2);">إجمالي التوصيل</div></div>'
+        +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--blue);">'+Object.keys(rCust).length+'</div><div style="font-size:11px;color:var(--txt2);">زبون مختلف</div></div>'
+        +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;">'+(nDays?Math.round(rOrders.length/nDays):0)+'</div><div style="font-size:11px;color:var(--txt2);">متوسط اليوم ('+nDays+' يوم)</div></div>'
+        +'</div>';
+      h+='<div style="font-size:12px;font-weight:600;margin-bottom:6px;">تفصيل المناديب</div><div class="twrap"><table><thead><tr><th>المندوب</th><th>أوردرات</th></tr></thead><tbody>';
+      rArr.forEach(function(x){ h+='<tr><td>'+x.n+'</td><td style="text-align:center;color:var(--acc);font-weight:600;">'+x.v+'</td></tr>'; });
+      h+='</tbody></table></div>';
+      rEl.innerHTML=h;
+    }
+  }
+  // db-income removed
+  document.getElementById('db-month').textContent=monOrders.length;
+
+  // صافي المكتب removed
+
+  // زبائن محتاجة متابعة
+  var lastMap={};
+  D.orders.forEach(function(o){
+    if(!lastMap[o.phone]||o.date>lastMap[o.phone]) lastMap[o.phone]=o.date;
+  });
+  var lost30=0,lost60=0,lost90=0;
+  Object.keys(lastMap).forEach(function(p){
+    var d=daysDiff(lastMap[p]);
+    if(d>90) lost90++;
+    else if(d>60) lost60++;
+    else if(d>30) lost30++;
+  });
+  document.getElementById('db-lost-summary').innerHTML=
+    '<div style="display:flex;flex-direction:column;gap:6px;">'
+    +'<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--surf2);border-radius:6px;"><span style="font-size:12px;">مطلبوش من شهر</span><strong style="color:var(--amber);">'+lost30+'</strong></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--surf2);border-radius:6px;"><span style="font-size:12px;">مطلبوش من شهرين</span><strong style="color:var(--red);">'+lost60+'</strong></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--surf2);border-radius:6px;"><span style="font-size:12px;">مطلبوش من 3 شهور</span><strong style="color:var(--red);">'+lost90+'</strong></div>'
+    +'</div>';
+
+  // أكتر المناديب النهارده
+  var riderCount={};
+  todOrders.forEach(function(o){
+    var r=o.rider||'غير محدد';
+    if(!riderCount[r]) riderCount[r]={count:0,fee:0};
+    riderCount[r].count++;
+    riderCount[r].fee+=o.fee;
+  });
+  var riderArr=Object.keys(riderCount).map(function(name){return {name:name,count:riderCount[name].count,fee:riderCount[name].fee};});
+  riderArr.sort(function(a,b){return b.count-a.count;});
+  var ridersHtml='';
+  if(!riderArr.length){
+    ridersHtml='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:14px;">مفيش أوردرات النهارده</div>';
+  } else {
+    riderArr.slice(0,5).forEach(function(r,i){
+      ridersHtml+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--surf2);border-radius:6px;margin-bottom:5px;">'
+        +'<span style="font-size:12px;font-weight:600;">'+(i+1)+'. '+r.name+'</span>'
+        +'<span style="font-size:12px;color:var(--acc);">'+r.count+' أوردر</span>'
+        +'</div>';
+    });
+  }
+  document.getElementById('db-top-riders').innerHTML=ridersHtml;
+
+  // آخر 6 شهور
+  var byMonth={};
+  D.orders.forEach(function(o){
+    if(!o.date) return;
+    var m=o.date.slice(0,7);
+    if(!byMonth[m]) byMonth[m]={count:0,fee:0};
+    byMonth[m].count++;
+    byMonth[m].fee+=o.fee;
+  });
+  var months=Object.keys(byMonth).sort().reverse().slice(0,6).reverse();
+  var maxCount=1;
+  months.forEach(function(m){if(byMonth[m].count>maxCount)maxCount=byMonth[m].count;});
+
+  var chartHtml='';
+  if(!months.length){
+    chartHtml='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:14px;">مفيش بيانات كفاية</div>';
+  } else {
+    months.forEach(function(m){
+      var pct=Math.round(byMonth[m].count/maxCount*100);
+      chartHtml+='<div style="margin-bottom:10px;">'
+        +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span>'+m+'</span><span style="color:var(--acc);">'+byMonth[m].count+' أوردر | '+byMonth[m].fee+' ج</span></div>'
+        +'<div style="background:var(--surf2);border-radius:6px;height:22px;overflow:hidden;"><div style="background:var(--acc);height:100%;width:'+pct+'%;border-radius:6px;transition:width 0.5s;"></div></div>'
+        +'</div>';
+    });
+  }
+  document.getElementById('db-months-chart').innerHTML=chartHtml;
+
+  // ===== أكتر الأماكن والمناطق =====
+  function filterByPeriod(orders, period){
+    var t=today(), m=thisMonth();
+    if(period==='month') return orders.filter(function(o){return o.date&&o.date.indexOf(m)===0;});
+    if(period==='week'){var w=new Date(Date.now()-7*864e5).toISOString().slice(0,10);return orders.filter(function(o){return o.date>=w;});}
+    return orders;
+  }
+
+  // أكتر الأماكن (بناءً على أسماء الزبائن اللي فئتهم مطعم/محل/شواية)
+  var placesPeriod=document.getElementById('db-places-period').value;
+  var placesOrders=filterByPeriod(D.orders, placesPeriod);
+  var placeCount={};
+  placesOrders.forEach(function(o){
+    var cd=D.customers[o.phone]||{};
+    var cat=cd.category||o.cat||'فرد';
+    // بس الأماكن التجارية (مش الأفراد)
+    if(cat==='مطعم'||cat==='محل'||cat==='شواية'||cat==='صيدلية'||cat==='معمل'){
+      var placeName=cd.name||o.name||o.phone;
+      if(!placeCount[placeName]) placeCount[placeName]={count:0,cat:cat};
+      placeCount[placeName].count++;
+    }
+  });
+  var placesArr=Object.keys(placeCount).map(function(n){return {name:n,count:placeCount[n].count,cat:placeCount[n].cat};});
+  placesArr.sort(function(a,b){return b.count-a.count;});
+
+  var placesHtml='';
+  if(!placesArr.length){
+    placesHtml='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:14px;">مفيش أماكن مسجلة<br><span style="font-size:10px;">سجّل الزبائن بفئة مطعم/محل/شواية</span></div>';
+  } else {
+    var maxPlace=placesArr[0].count;
+    placesArr.slice(0,7).forEach(function(p,i){
+      var pct=Math.round(p.count/maxPlace*100);
+      placesHtml+='<div style="margin-bottom:8px;">'
+        +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px;"><span style="font-weight:600;">'+(i+1)+'. '+p.name+'</span><span style="color:var(--acc);">'+p.count+'</span></div>'
+        +'<div style="background:var(--surf2);border-radius:5px;height:8px;overflow:hidden;"><div style="background:var(--acc);height:100%;width:'+pct+'%;"></div></div>'
+        +'</div>';
+    });
+  }
+  document.getElementById('db-top-places').innerHTML=placesHtml;
+
+  // أكتر المناطق (بناءً على address)
+  var areasPeriod=document.getElementById('db-areas-period').value;
+  var areasOrders=filterByPeriod(D.orders, areasPeriod);
+  var areaCount={};
+  areasOrders.forEach(function(o){
+    var area=(o.address||'').trim();
+    if(area){
+      if(!areaCount[area]) areaCount[area]=0;
+      areaCount[area]++;
+    }
+  });
+  var areasArr=Object.keys(areaCount).map(function(a){return {name:a,count:areaCount[a]};});
+  areasArr.sort(function(a,b){return b.count-a.count;});
+
+  var areasHtml='';
+  if(!areasArr.length){
+    areasHtml='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:14px;">مفيش مناطق مسجلة<br><span style="font-size:10px;">سجّل الشارع مع الأوردر</span></div>';
+  } else {
+    var maxArea=areasArr[0].count;
+    areasArr.slice(0,7).forEach(function(a,i){
+      var pct=Math.round(a.count/maxArea*100);
+      areasHtml+='<div style="margin-bottom:8px;">'
+        +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px;"><span style="font-weight:600;">'+(i+1)+'. '+a.name+'</span><span style="color:var(--green);">'+a.count+'</span></div>'
+        +'<div style="background:var(--surf2);border-radius:5px;height:8px;overflow:hidden;"><div style="background:var(--green);height:100%;width:'+pct+'%;"></div></div>'
+        +'</div>';
+    });
+  }
+  document.getElementById('db-top-areas').innerHTML=areasHtml;
+
+
+  // ===== أوقات الذروة =====
+  var peakSel=document.getElementById('db-peak-period').value;
+  var peakOrders=D.orders;
+  if(peakSel!=='all'){
+    var pcut=new Date(Date.now()-parseInt(peakSel,10)*864e5).toISOString().slice(0,10);
+    peakOrders=D.orders.filter(function(o){return o.date&&o.date>=pcut;});
+  }
+  var hours=new Array(24).fill(0);
+  var days=[0,0,0,0,0,0,0];
+  var dayNames=['الأحد','الاتنين','التلات','الأربع','الخميس','الجمعة','السبت'];
+  peakOrders.forEach(function(o){
+    if(!o.ts) return;
+    var d=new Date(o.ts);
+    if(isNaN(d.getTime())) return;
+    hours[d.getHours()]++;
+    days[d.getDay()]++;
+  });
+  var maxH=Math.max.apply(null,hours)||1;
+  var totalH=hours.reduce(function(a,b){return a+b;},0);
+  var peakHtml='';
+  if(!totalH){
+    peakHtml='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:14px;">مفيش بيانات في الفترة دي</div>';
+  } else {
+    var bestH=hours.indexOf(maxH);
+    var top3=hours.map(function(v,i){return {h:i,v:v};}).sort(function(a,b){return b.v-a.v;}).slice(0,3);
+    var sum3=top3.reduce(function(a,x){return a+x.v;},0);
+    peakHtml='<div style="background:rgba(245,166,35,.1);border-radius:8px;padding:8px 10px;margin-bottom:10px;font-size:12px;line-height:1.8;">'
+      +'أعلى ساعة: <strong style="color:var(--acc);">'+String(bestH).padStart(2,'0')+':00</strong>'
+      +' | أقوى 3 ساعات فيها <strong style="color:var(--acc);">'+Math.round(sum3/totalH*100)+'%</strong> من الأوردرات'
+      +'</div>';
+    peakHtml+='<div style="display:flex;align-items:flex-end;gap:2px;height:110px;margin-bottom:6px;">';
+    for(var h=0;h<24;h++){
+      var pc=Math.round(hours[h]/maxH*100);
+      var col=hours[h]===maxH?'var(--acc)':'rgba(245,166,35,.4)';
+      peakHtml+='<div title="'+h+':00 - '+hours[h]+' أوردر" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;">'
+        +'<div style="background:'+col+';height:'+pc+'%;border-radius:3px 3px 0 0;min-height:2px;"></div></div>';
+    }
+    peakHtml+='</div><div style="display:flex;gap:2px;font-size:9px;color:var(--txt2);margin-bottom:12px;">';
+    for(var h2=0;h2<24;h2++){
+      peakHtml+='<div style="flex:1;text-align:center;">'+(h2%3===0?h2:'')+'</div>';
+    }
+    peakHtml+='</div>';
+    var maxD=Math.max.apply(null,days)||1;
+    peakHtml+='<div style="font-size:12px;font-weight:600;margin-bottom:6px;">أيام الأسبوع</div>';
+    for(var dd=0;dd<7;dd++){
+      var dp=Math.round(days[dd]/maxD*100);
+      peakHtml+='<div style="margin-bottom:5px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;"><span>'+dayNames[dd]+'</span><span style="color:var(--acc);">'+days[dd]+'</span></div>'
+        +'<div style="background:var(--surf2);border-radius:5px;height:7px;overflow:hidden;"><div style="background:'+(days[dd]===maxD?'var(--acc)':'rgba(245,166,35,.45)')+';height:100%;width:'+dp+'%;"></div></div></div>';
+    }
+  }
+  document.getElementById('db-peak-hours').innerHTML=peakHtml;
+
+  // ===== أكتر الزبائن طلباً =====
+  var custPeriod=document.getElementById('db-customers-period').value;
+  var custFrom=document.getElementById('db-cust-from').value;
+  var custTo=document.getElementById('db-cust-to').value;
+  var custLimit=parseInt(document.getElementById('db-customers-limit').value)||50;
+  var custOrders;
+  if(custFrom||custTo){
+    custOrders=D.orders.filter(function(o){
+      if(!o.date) return false;
+      if(custFrom&&o.date<custFrom) return false;
+      if(custTo&&o.date>custTo) return false;
+      return true;
+    });
+  } else if(custPeriod==='custom'){
+    custOrders=D.orders;
+  } else if(!isNaN(parseInt(custPeriod))){
+    var cut=new Date(Date.now()-parseInt(custPeriod)*864e5).toISOString().slice(0,10);
+    custOrders=D.orders.filter(function(o){return o.date&&o.date>=cut;});
+  } else {
+    custOrders=filterByPeriod(D.orders, custPeriod);
+  }
+  var custCount={};
+  custOrders.forEach(function(o){
+    if(!custCount[o.phone]) custCount[o.phone]={count:0,fee:0,lastDate:null};
+    custCount[o.phone].count++;
+    custCount[o.phone].fee+=o.fee;
+    if(!custCount[o.phone].lastDate||o.date>custCount[o.phone].lastDate) custCount[o.phone].lastDate=o.date;
+  });
+  var custArr=Object.keys(custCount).map(function(p){
+    return {phone:p,count:custCount[p].count,fee:custCount[p].fee,lastDate:custCount[p].lastDate};
+  });
+  custArr.sort(function(a,b){return b.count-a.count;});
+
+  var custHtml='';
+  if(!custArr.length){
+    custHtml='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:14px;">مفيش أوردرات في الفترة دي</div>';
+  } else {
+    custHtml='<div class="twrap"><table><thead><tr><th>#</th><th>الاسم</th><th>الموبايل</th><th>عدد الأوردرات</th><th>إجمالي التوصيل</th><th>آخر طلب</th></tr></thead><tbody>';
+    custArr.slice(0,custLimit).forEach(function(c,i){
+      var cd=D.customers[c.phone]||{};
+      var rankColor=i===0?'var(--acc)':(i<3?'var(--green)':'var(--txt)');
+      var medal=i===0?'🥇':(i===1?'🥈':(i===2?'🥉':(i+1)+'.'));
+      custHtml+='<tr>'
+        +'<td style="font-weight:700;color:'+rankColor+';font-size:14px;">'+medal+'</td>'
+        +'<td style="font-weight:600;">'+(cd.name||'بدون اسم')+'</td>'
+        +'<td dir="ltr" style="font-size:11px;">'+c.phone+'</td>'
+        +'<td style="text-align:center;font-weight:700;color:var(--acc);font-size:15px;">'+c.count+'</td>'
+        +'<td style="color:var(--green);">'+c.fee+' ج</td>'
+        +'<td style="font-size:11px;color:var(--txt2);">'+fmtD(c.lastDate)+'</td>'
+        +'</tr>';
+    });
+    custHtml+='</tbody></table></div>';
+  }
+  window._topCustPhones=custArr.slice(0,custLimit).map(function(c){return c.phone;});
+  var ccEl=document.getElementById('db-cust-count');
+  if(ccEl) ccEl.textContent='إجمالي: '+custArr.length+' زبون | ظاهر: '+Math.min(custLimit,custArr.length);
+  document.getElementById('db-top-customers').innerHTML=custHtml;
+}
+
+// ===== يوم معين — تنقل سهل بين الأيام =====
+function shiftDayPick(delta){
+  var el=document.getElementById('db-day-pick');
+  if(!el) return;
+  var val=el.value||today();
+  var d=new Date(val+'T00:00:00');
+  d.setDate(d.getDate()+delta);
+  el.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  renderDayPick();
+}
+
+function renderDayPick(){
+  var el=document.getElementById('db-day-pick');
+  var resEl=document.getElementById('db-day-result');
+  if(!el||!resEl) return;
+  if(!el.value) el.value=today();
+  var d=el.value;
+  var dOrders=D.orders.filter(function(o){return o.date===d;}).sort(function(a,b){return (a.ts||'').localeCompare(b.ts||'');});
+  if(!dOrders.length){
+    resEl.innerHTML='<div style="color:var(--txt2);font-size:12px;text-align:center;padding:14px;">مفيش أوردرات في اليوم ده</div>';
+    return;
+  }
+  var fee=dOrders.reduce(function(a,o){return a+o.fee;},0);
+  var custSet={}; dOrders.forEach(function(o){custSet[o.phone]=1;});
+  var h='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;">'
+    +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--acc);">'+dOrders.length+'</div><div style="font-size:11px;color:var(--txt2);">أوردر</div></div>'
+    +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--green);">'+fee+' ج</div><div style="font-size:11px;color:var(--txt2);">إجمالي التوصيل</div></div>'
+    +'<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:20px;font-weight:700;color:var(--blue);">'+Object.keys(custSet).length+'</div><div style="font-size:11px;color:var(--txt2);">زبون مختلف</div></div>'
+    +'</div><div class="twrap" style="max-height:320px;overflow-y:auto;"><table><thead><tr><th>الوقت</th><th>الاسم</th><th>الموبايل</th><th>المندوب</th><th>التوصيل</th></tr></thead><tbody>';
+  dOrders.forEach(function(o){
+    h+='<tr><td>'+(o.ts?fmtTime(o.ts):'—')+'</td><td>'+(o.name||'—')+'</td><td dir="ltr" style="font-size:11px;">'+o.phone+'</td><td>'+(o.rider||'—')+'</td><td style="color:var(--acc);font-weight:600;">'+o.fee+'ج</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  resEl.innerHTML=h;
+}
+
+function copyTopCustomersPhones(){
+  var phones=window._topCustPhones||[];
+  if(!phones.length){toast('مفيش أرقام','var(--amber)');return;}
+  showPhonesList('أرقام أكتر الزبائن', phones);
+}
+
+
+// ===== فك ملف zip بتاع الواتساب =====
+function zipFindTxt(buf){
+  var dv=new DataView(buf), u8=new Uint8Array(buf);
+  // دور على End of Central Directory
+  var eocd=-1;
+  for(var i=u8.length-22;i>=0 && i>u8.length-66000;i--){
+    if(dv.getUint32(i,true)===0x06054b50){ eocd=i; break; }
+  }
+  if(eocd<0) return null;
+  var count=dv.getUint16(eocd+10,true);
+  var cdOff=dv.getUint32(eocd+16,true);
+  var p=cdOff, best=null;
+  for(var n=0;n<count && p+46<=u8.length;n++){
+    if(dv.getUint32(p,true)!==0x02014b50) break;
+    var method=dv.getUint16(p+10,true);
+    var csize=dv.getUint32(p+20,true);
+    var fnLen=dv.getUint16(p+28,true);
+    var exLen=dv.getUint16(p+30,true);
+    var cmLen=dv.getUint16(p+32,true);
+    var lhOff=dv.getUint32(p+42,true);
+    var name=new TextDecoder('utf-8').decode(u8.subarray(p+46,p+46+fnLen));
+    if(/\.txt$/i.test(name) && !/^__MACOSX/.test(name)){
+      if(!best || csize>best.csize) best={name:name,method:method,csize:csize,lhOff:lhOff};
+    }
+    p += 46+fnLen+exLen+cmLen;
+  }
+  if(!best) return null;
+  // اقرا الـ local header عشان مكان الداتا
+  if(dv.getUint32(best.lhOff,true)!==0x04034b50) return null;
+  var lfn=dv.getUint16(best.lhOff+26,true);
+  var lex=dv.getUint16(best.lhOff+28,true);
+  var start=best.lhOff+30+lfn+lex;
+  return {method:best.method, data:u8.subarray(start,start+best.csize)};
+}
+
+function zipReadText(buf){
+  var f=zipFindTxt(buf);
+  if(!f) return Promise.reject(new Error('nofile'));
+  if(f.method===0) return Promise.resolve(new TextDecoder('utf-8').decode(f.data));
+  if(typeof DecompressionStream==='undefined') return Promise.reject(new Error('nods'));
+  var ds=new DecompressionStream('deflate-raw');
+  var w=ds.writable.getWriter();
+  w.write(f.data); w.close();
+  return new Response(ds.readable).arrayBuffer().then(function(ab){
+    return new TextDecoder('utf-8').decode(new Uint8Array(ab));
+  });
+}
+
+// ===== قراءة ملف شات الواتساب =====
+function arDigits(s){
+  var ar='\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669';
+  var fa='\u06F0\u06F1\u06F2\u06F3\u06F4\u06F5\u06F6\u06F7\u06F8\u06F9';
+  var out='';
+  for(var i=0;i<s.length;i++){
+    var c=s[i], k=ar.indexOf(c);
+    if(k<0) k=fa.indexOf(c);
+    out += (k>=0) ? String(k) : c;
+  }
+  return out;
+}
+
+function parseChatLine(line){
+  // بيرجع {ts, body} لو السطر بداية رسالة، أو null
+  var s=arDigits(line).replace(/[\u200e\u200f\u202a-\u202e]/g,'').trim();
+  var m=s.match(/^\[?\s*(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})[,\u060C]?\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([\u0635\u0645]|[APap]\.?[Mm]\.?)?\s*\]?\s*[-\u2013]?\s*([\s\S]*)$/);
+  if(!m) return null;
+  var d=parseInt(m[1],10), mo=parseInt(m[2],10), y=parseInt(m[3],10);
+  if(y<100) y+=2000;
+  var h=parseInt(m[4],10), mi=parseInt(m[5],10);
+  var ap=(m[7]||'').toLowerCase();
+  var isPM = (ap.indexOf('\u0645')===0 && ap.indexOf('\u0635')<0) || ap.indexOf('p')===0;
+  var isAM = ap.indexOf('\u0635')===0 || ap.indexOf('a')===0;
+  if(isPM && h<12) h+=12;
+  if(isAM && h===12) h=0;
+  var rest=m[8]||'';
+  // شيل اسم المرسل
+  var ci=rest.indexOf(':');
+  if(ci>0 && ci<40) rest=rest.slice(ci+1).trim();
+  return {ts:new Date(y,mo-1,d,h,mi).getTime(), body:rest};
+}
+
+function extractOrdersFromChat(text, hours){
+  var lines=text.split(/\r?\n/);
+  var msgs=[], cur=null;
+  for(var i=0;i<lines.length;i++){
+    var p=parseChatLine(lines[i]);
+    if(p){ if(cur) msgs.push(cur); cur={ts:p.ts, body:p.body}; }
+    else if(cur && lines[i].trim()){ cur.body += ' ' + lines[i].trim(); }
+  }
+  if(cur) msgs.push(cur);
+
+  if(hours>0){
+    var cut=Date.now()-hours*3600000;
+    msgs=msgs.filter(function(m){return m.ts>=cut;});
+  }
+
+  // اجمع: رسالة فيها رقم = بداية أوردر، اللي بعدها من غير رقم = تكملة الطلب
+  var orders=[], o=null;
+  for(var j=0;j<msgs.length;j++){
+    var body=arDigits(msgs[j].body||'').trim();
+    if(!body) continue;
+    if(/(\u0648\u0633\u0627\u0626\u0637|\u062d\u0630\u0641\u062a|\u0645\u0631\u0641\u0642|omitted|deleted)/i.test(body)) continue;
+    if(/^(\u062a\u0645|\u062a\u0645\u0627\u0645|\u0627\u0648\u0643\u064a|ok|okay|\u061f+|\?+)$/i.test(body)) continue;
+    var ph=extractPhone(body);
+    if(ph){
+      if(o) orders.push(o);
+      var t=body.replace(/(?:\+?\s*20[\s\-]*)?0?1[0-9](?:[\s\-]*\d){8}/g,' ').replace(/\s{2,}/g,' ').trim();
+      o={phone:ph, text:t, ts:msgs[j].ts};
+    } else if(o){
+      if((o.text+' '+body).length<200) o.text=(o.text+' '+body).trim();
+    }
+  }
+  if(o) orders.push(o);
+  return orders;
+}
+
+function readChatFile(){
+  var inp=document.getElementById('chat-file');
+  var msgEl=document.getElementById('chat-msg');
+  if(!inp.files || !inp.files.length){ toast('اختار الملف الأول','var(--amber)'); return; }
+  var hours=parseInt(document.getElementById('chat-range').value,10);
+  var file=inp.files[0];
+  // المندوب المختار وقت رفع الملف بيتطبق على الخلايا تلقائي
+  var chosenRider=(document.getElementById('chat-file-rider')||{}).value||'';
+  var cellRiderEl=document.getElementById('cell-rider');
+  if(cellRiderEl) cellRiderEl.value=chosenRider;
+  var isZip=/\.zip$/i.test(file.name);
+  var rd=new FileReader();
+  rd.onload=function(e){
+    if(isZip){
+      zipReadText(e.target.result).then(function(txt){ handleChatText(txt,hours,msgEl); })
+        .catch(function(err){
+          var m=(err&&err.message)==='nods' ? 'المتصفح قديم - فك الملف يدوي وارفع الـ txt'
+               : 'مش لاقي ملف txt جوه الـ zip - فكه يدوي وارفع الـ txt';
+          msgEl.innerHTML='<span style="color:var(--red);">'+m+'</span>';
+          toast('مش قادر أفك الـ zip','var(--red)');
+        });
+      return;
+    }
+    handleChatText(String(e.target.result||''), hours, msgEl);
+  };
+  rd.onerror=function(){ toast('مش قادر أقرا الملف','var(--red)'); };
+  if(isZip) rd.readAsArrayBuffer(file); else rd.readAsText(file,'UTF-8');
+}
+
+function handleChatText(text, hours, msgEl){
+  {
+    var orders=extractOrdersFromChat(text, hours);
+    if(!orders.length){
+      msgEl.innerHTML='<span style="color:var(--red);">مفيش أرقام في الفترة دي - جرب "كل الشات"</span>';
+      toast('مفيش أرقام في الفترة دي','var(--amber)');
+      return;
+    }
+    // شيل المكرر (آخر نسخة للرقم)
+    var seen={}, uniq=[];
+    for(var i=orders.length-1;i>=0;i--){
+      if(!seen[orders[i].phone]){ seen[orders[i].phone]=1; uniq.unshift(orders[i]); }
+    }
+    // امسح الخلايا
+    for(var c=0;c<CELL_COUNT;c++){
+      var el=document.getElementById('cell-'+c);
+      var chk=document.getElementById('cchk-'+c);
+      var wrap=document.getElementById('cwrap-'+c);
+      if(el) el.value='';
+      if(chk) chk.checked=false;
+      if(wrap) wrap.classList.remove('selected');
+    }
+    var n=Math.min(uniq.length, CELL_COUNT);
+    for(var k=0;k<n;k++){
+      var cell=document.getElementById('cell-'+k);
+      if(cell){ cell.value=(uniq[k].phone+' '+uniq[k].text).trim(); autocheckCell(k); }
+    }
+    // احفظ وقت الطلب الحقيقي لكل رقم
+    var tmap={};
+    for(var z=0;z<n;z++){ if(uniq[z].ts) tmap[uniq[z].phone]=uniq[z].ts; }
+    try{ localStorage.setItem('fk6_chat_times', JSON.stringify(tmap)); }catch(e){}
+    saveCells();
+    var extra = uniq.length>CELL_COUNT ? (' - فاضل '+(uniq.length-CELL_COUNT)+' مدخلهمش لأن الخلايا '+CELL_COUNT) : '';
+    var riderNow=(document.getElementById('cell-rider')||{}).value||'';
+    var riderNote=riderNow?(' | المندوب: <strong style="color:var(--acc);">'+riderNow+'</strong>'):'';
+    msgEl.innerHTML='<span style="color:var(--green);">تم استخراج '+n+' أوردر ('+uniq.length+' رقم مختلف)'+extra+'</span>'+riderNote;
+    toast('تم استخراج '+n+' أوردر');
+    document.getElementById('cells-grid').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+function setRangeQuick(days){
+  var to=new Date();
+  var from=new Date(Date.now()-(days-1)*864e5);
+  function f(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  document.getElementById('db-range-from').value=f(from);
+  document.getElementById('db-range-to').value=f(to);
+  renderDashboard();
+}
+
+// ===== Init =====
+refreshRiderSelects();
+renderRidersRegistry();
+refreshSettleRiderSelect();
+renderDashboard();
+// تنبيه النسخة الاحتياطية
+(function(){
+  var lastBackup=localStorage.getItem('fk6_last_backup')||'';
+  var tod=new Date().toISOString().slice(0,10);
+  var yest=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  if(D.orders.length>0 && lastBackup<yest){
+    document.getElementById('backup-alert').style.display='block';
+  }
+})();
+rebuildCatSelects();
+updateHistStats();
+document.getElementById('rpt-month').value=thisMonth();
+document.getElementById('settle-day-pick').value=today();
+document.getElementById('settle-month-pick').value=thisMonth();
+document.getElementById('wallet-earn-date').value=today();
+document.getElementById('wallet-wd-date').value=today();
+
+// استعادة الخلايا لو في حاجة محفوظة
+restoreCells();
+
+// حفظ تلقائي كل دقيقة
+setInterval(()=>{
+  saveCells();
+  const el=document.getElementById('autosave-indicator');
+  if(el){
+    const now=new Date();
+    el.textContent='✓ تم الحفظ '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  }
+},60000);
+
+// حفظ عند أي كتابة في الخلايا
+document.getElementById('cells-grid').addEventListener('input',()=>{
+  saveCells();
+});
+</script>
+</body>
+</html>
