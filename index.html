@@ -457,7 +457,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
     <div class="card-title" id="settle-pass-title">🔒 الصفحة محمية بباسورد</div>
     <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;" id="settle-pass-hint"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-      <input type="password" id="settle-pass-input" name="settlement-lock-code" placeholder="اكتب الباسورد" style="max-width:160px;" autocomplete="off" onkeydown="if(event.key==='Enter')checkSettlePassword();">
+      <input type="text" id="settle-pass-input" name="lock-code-nopass" placeholder="اكتب الباسورد" style="max-width:160px;-webkit-text-security:disc;text-security:disc;" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter')checkSettlePassword();">
       <button class="btn btn-acc" onclick="checkSettlePassword()">دخول</button>
     </div>
     <div id="settle-pass-err" style="color:var(--red);font-size:11px;margin-top:8px;"></div>
