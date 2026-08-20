@@ -66,6 +66,11 @@ tr:hover td{background:rgba(255,255,255,.02);}
 .cells-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
 .cell-wrap{position:relative;background:var(--surf2);border:1.5px solid var(--bord);border-radius:9px;padding:8px;}
 .cell-wrap.selected{border-color:var(--acc);}
+.cell-wrap.timed{border-color:var(--red);background:linear-gradient(180deg,rgba(231,76,60,.10),transparent);}
+.cell-wrap.timed.ready{border-color:var(--green);animation:cellPulse 1s infinite alternate;}
+@keyframes cellPulse{from{box-shadow:0 0 0 0 rgba(46,204,113,.35);} to{box-shadow:0 0 0 7px rgba(46,204,113,0);}}
+.btn-timer-q{background:var(--surf2);border:1px solid var(--bord);color:var(--txt);border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer;}
+.btn-timer-q:hover{border-color:var(--amber);}
 .cell-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
 .cell-num{font-size:10px;color:var(--txt2);}
 .cell-chk{width:16px;height:16px;cursor:pointer;accent-color:var(--acc);}
@@ -125,6 +130,7 @@ tr:hover td{background:rgba(255,255,255,.02);}
     <button class="tab" onclick="showPage('customers',this)">الزبائن</button>
     <button class="tab" onclick="showPage('riders',this)">المناديب</button>
     <button class="tab" onclick="showPage('settlements',this)">تصفية المناديب</button>
+    <button class="tab" onclick="showPage('invoices',this)">فواتير المناديب</button>
     <button class="tab" onclick="showPage('history',this)">السجل</button>
     <button class="tab" onclick="showPage('complaints',this)">الشكاوى</button>
     <button class="tab" onclick="showPage('settings',this)">الإعدادات</button>
@@ -640,7 +646,36 @@ tr:hover td{background:rgba(255,255,255,.02);}
   </div>
 </div>
 
-<!-- ===== البيانات ===== -->
+<!-- ===== فواتير المناديب ===== -->
+<div class="page" id="page-invoices">
+  <div class="card">
+    <div class="card-title">📤 إرسال طلب لمندوب</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+      <input id="inv-cust-name" placeholder="اسم الزبون (اختياري)" style="max-width:160px;">
+      <input id="inv-cust-phone" placeholder="رقم موبايل الزبون" style="max-width:150px;direction:ltr;text-align:right;">
+      <select id="inv-rider" style="min-width:130px;"><option value="">اختر مندوب</option></select>
+      <input id="inv-delivery" type="number" placeholder="سعر التوصيل (اختياري)" style="max-width:150px;">
+    </div>
+    <div id="inv-items-rows" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;"></div>
+    <button class="btn btn-sm" onclick="addInvoiceItemRow()" style="margin-bottom:12px;">+ ضيف صنف</button>
+    <br>
+    <button class="btn btn-acc" onclick="sendOrderToRider()">إرسال للمندوب 🛵</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧾 طلباتي اللي محتاجة فاتورة</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+      <span style="font-size:12px;color:var(--txt2);">أنا مين؟</span>
+      <select id="inv-my-name" onchange="rememberMyName();renderMyInvoices();" style="min-width:130px;"><option value="">اختر اسمك</option></select>
+    </div>
+    <div id="my-invoices-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📜 آخر الفواتير المرسلة</div>
+    <div id="sent-invoices-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
 <div class="page" id="page-backup">
   <div class="card">
     <div class="card-title">فحص وإحصائيات البيانات</div>
@@ -828,6 +863,7 @@ function cloudPullOnce(){
       D.extraCats=cloud.extraCats||[];
       D.settlements=cloud.settlements||[];
       D.wallet=cloud.wallet||[];
+      D.invoices=cloud.invoices||[];
       D.settings=Object.assign({},D.settings,cloud.settings||{});
       suppressCloudPush=true;
       saveData();
@@ -854,7 +890,7 @@ function cloudPush(){
   if(!ref)return;
   var payload={
     orders:D.orders,customers:D.customers,riders:D.riders,complaints:D.complaints,
-    streets:D.streets,extraCats:D.extraCats,settlements:D.settlements,wallet:D.wallet,
+    streets:D.streets,extraCats:D.extraCats,settlements:D.settlements,wallet:D.wallet,invoices:D.invoices,
     settings:D.settings,updatedAt:new Date().toISOString()
   };
   ref.set(payload).then(function(){
@@ -868,6 +904,7 @@ function fullRerender(){
   refreshRiderSelects();
   renderRidersRegistry();
   refreshSettleRiderSelect();
+  refreshInvoiceRiderSelects();
   rebuildCatSelects();
   renderDashboard();
   updateHistStats();
@@ -896,7 +933,7 @@ auth.onAuthStateChanged(function(user){
 });
 
 // ===== Data =====
-let D={orders:[],customers:{},riders:[],complaints:[],streets:[],extraCats:[],settlements:[],wallet:[],settings:{fee1:20,fee2:25,fee3:30,fee4:35,feeOut:40}};
+let D={orders:[],customers:{},riders:[],complaints:[],streets:[],extraCats:[],settlements:[],wallet:[],invoices:[],settings:{fee1:20,fee2:25,fee3:30,fee4:35,feeOut:40}};
 var DEFAULT_CATS=['فرد','مطعم','أونلاين','شواية','محل','معمل','صيدلية'];
 function getAllCats(){var r=DEFAULT_CATS.slice();D.extraCats.forEach(function(c){if(DEFAULT_CATS.indexOf(c)<0)r.push(c);});return r;}
 
@@ -906,6 +943,7 @@ function loadData(){
   try{D.riders=JSON.parse(localStorage.getItem('fk6_riders')||'[]');}catch(e){D.riders=[];}
   try{D.settlements=JSON.parse(localStorage.getItem('fk6_settlements')||'[]');}catch(e){D.settlements=[];}
   try{D.wallet=JSON.parse(localStorage.getItem('fk6_wallet')||'[]');}catch(e){D.wallet=[];}
+  try{D.invoices=JSON.parse(localStorage.getItem('fk6_invoices')||'[]');}catch(e){D.invoices=[];}
   try{D.complaints=JSON.parse(localStorage.getItem('fk6_complaints')||'[]');}catch(e){D.complaints=[];}
   try{D.extraCats=JSON.parse(localStorage.getItem('fk6_excats')||'[]');}catch(e){D.extraCats=[];}
   try{D.streets=JSON.parse(localStorage.getItem('fk6_streets')||'["تريان","المركز","حامول العرب","حامول السعيد","السلاهيب","الجامع","أوسكر","الحلافي","المستشفى","وسط البلد","المرور","أبو منصور"]');}catch(e){D.streets=[];}
@@ -917,6 +955,7 @@ function saveData(){
   localStorage.setItem('fk6_riders',JSON.stringify(D.riders));
   localStorage.setItem('fk6_settlements',JSON.stringify(D.settlements));
   localStorage.setItem('fk6_wallet',JSON.stringify(D.wallet));
+  localStorage.setItem('fk6_invoices',JSON.stringify(D.invoices));
   localStorage.setItem('fk6_complaints',JSON.stringify(D.complaints));
   localStorage.setItem('fk6_streets',JSON.stringify(D.streets));
   localStorage.setItem('fk6_excats',JSON.stringify(D.extraCats));
@@ -958,6 +997,7 @@ function showPage(id,btn){
   if(id==='customers')renderCustomers();
   if(id==='riders'){refreshRiderSelects();renderRiderStats();renderRidersRegistry();}
   if(id==='settlements'){renderSettleGate();}
+  if(id==='invoices'){refreshInvoiceRiderSelects();renderMyInvoices();renderSentInvoicesHistory();}
   if(id==='history'){renderHistory();updateHistStats();}
   if(id==='complaints'){refreshRiderSelects();renderComplaints();}
   if(id==='settings'){renderStreets();loadSettingsUI();}
@@ -1028,18 +1068,30 @@ function detectFeeFromText(txt){
 
 // ===== Cells =====
 const CELL_COUNT=40;
+const TIMER_CELL_START=12, TIMER_CELL_END=19; // خلايا ١٣ لـ ٢٠ (0-indexed)
 function buildCells(){
   const grid=document.getElementById('cells-grid');
   let html='';
   for(let i=0;i<CELL_COUNT;i++){
-    html+=`<div class="cell-wrap" id="cwrap-${i}">
+    const isTimed = i>=TIMER_CELL_START && i<=TIMER_CELL_END;
+    const timerBlock = isTimed ? `
+      <div class="timer-row" style="display:flex;gap:3px;align-items:center;margin-bottom:4px;flex-wrap:wrap;">
+        <button class="btn-timer-q" onclick="startCellTimer(${i},15)">15د</button>
+        <button class="btn-timer-q" onclick="startCellTimer(${i},30)">30د</button>
+        <button class="btn-timer-q" onclick="startCellTimer(${i},60)">60د</button>
+        <input type="number" id="timer-custom-${i}" placeholder="دقايق" style="width:48px;padding:2px 4px;font-size:10px;">
+        <button class="btn-timer-q" onclick="startCellTimerCustom(${i})">ابدأ</button>
+      </div>
+      <div class="timer-status" id="timerstatus-${i}" style="font-size:11px;margin-bottom:4px;display:none;"></div>` : '';
+    html+=`<div class="cell-wrap${isTimed?' timed':''}" id="cwrap-${i}">
       <div class="cell-top">
-        <span class="cell-num">${i+1}</span>
+        <span class="cell-num">${i+1}${isTimed?' ⏱️':''}</span>
         <div style="display:flex;gap:4px;align-items:center;">
           <button onclick="clearOneCell(${i})" style="background:none;border:none;color:var(--txt2);cursor:pointer;font-size:13px;line-height:1;padding:0 2px;" title="مسح الخلية">×</button>
           <input type="checkbox" class="cell-chk" id="cchk-${i}" onchange="toggleCellSelect(${i})" title="علّم عشان تحفظ">
         </div>
       </div>
+      ${timerBlock}
       <textarea id="cell-${i}" placeholder="الصق الأوردر هنا..." oninput="autocheckCell(${i})"></textarea>
     </div>`;
   }
@@ -1073,6 +1125,7 @@ function clearOneCell(i){
   if(el)el.value='';
   if(chk)chk.checked=false;
   if(wrap)wrap.classList.remove('selected');
+  if(i>=TIMER_CELL_START && i<=TIMER_CELL_END) cancelCellTimer(i);
   saveCells();
 }
 
@@ -1108,6 +1161,87 @@ function restoreCells(){
     toast(`تم استعادة ${count} خلية من آخر حفظ ✓`);
   }catch(e){}
 }
+
+// ===== Cell Ready Timers (خلايا ١٣ لـ ٢٠) =====
+let cellTimers={};
+let cellTimersReady={};
+function loadCellTimers(){
+  try{ cellTimers=JSON.parse(localStorage.getItem('fk6_cell_timers')||'{}'); }catch(e){ cellTimers={}; }
+  try{ cellTimersReady=JSON.parse(localStorage.getItem('fk6_cell_timers_ready')||'{}'); }catch(e){ cellTimersReady={}; }
+}
+function saveCellTimers(){
+  localStorage.setItem('fk6_cell_timers',JSON.stringify(cellTimers));
+  localStorage.setItem('fk6_cell_timers_ready',JSON.stringify(cellTimersReady));
+}
+function startCellTimer(i,minutes){
+  cellTimers[i]=Date.now()+minutes*60000;
+  delete cellTimersReady[i];
+  saveCellTimers();
+  try{ if(window.Notification && Notification.permission==='default') Notification.requestPermission(); }catch(e){}
+  updateTimerUI(i);
+  toast('⏱️ اتحط تايمر '+minutes+' دقيقة على خلية '+(i+1));
+}
+function startCellTimerCustom(i){
+  var el=document.getElementById('timer-custom-'+i);
+  var m=parseFloat(el.value);
+  if(!m||m<=0){ toast('اكتب عدد دقايق صحيح','var(--amber)'); return; }
+  startCellTimer(i,m);
+  el.value='';
+}
+function cancelCellTimer(i){
+  delete cellTimers[i];
+  delete cellTimersReady[i];
+  saveCellTimers();
+  updateTimerUI(i);
+}
+function playBeep(){
+  try{
+    var ctx=new (window.AudioContext||window.webkitAudioContext)();
+    var o=ctx.createOscillator(); var g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value=880; g.gain.value=0.15;
+    o.start(); setTimeout(function(){o.stop();ctx.close();},300);
+  }catch(e){}
+}
+function updateTimerUI(i){
+  var statusEl=document.getElementById('timerstatus-'+i);
+  var wrap=document.getElementById('cwrap-'+i);
+  if(!statusEl||!wrap)return;
+  if(cellTimers[i]===undefined){
+    statusEl.style.display='none';
+    wrap.classList.remove('ready');
+    return;
+  }
+  var remaining=cellTimers[i]-Date.now();
+  if(remaining<=0){
+    statusEl.style.display='block';
+    statusEl.style.color='var(--green)';
+    statusEl.innerHTML='✅ جاهزة! <span style="text-decoration:underline;cursor:pointer;" onclick="cancelCellTimer('+i+')">(إخفاء)</span>';
+    wrap.classList.add('ready');
+    if(!cellTimersReady[i]){
+      cellTimersReady[i]=true;
+      saveCellTimers();
+      toast('⏰ خلية رقم '+(i+1)+' جاهزة دلوقتي!','var(--green)');
+      try{ if(window.Notification && Notification.permission==='granted'){ new Notification('⏰ أوردر جاهز',{body:'خلية رقم '+(i+1)+' الوقت خلص'}); } }catch(e){}
+      playBeep();
+    }
+  }else{
+    var mins=Math.floor(remaining/60000);
+    var secs=Math.floor((remaining%60000)/1000);
+    statusEl.style.display='block';
+    statusEl.style.color='var(--amber)';
+    statusEl.innerHTML='⏳ باقي '+mins+':'+String(secs).padStart(2,'0');
+    wrap.classList.remove('ready');
+  }
+}
+function tickAllTimers(){
+  for(var i=TIMER_CELL_START;i<=TIMER_CELL_END;i++){
+    if(cellTimers[i]!==undefined) updateTimerUI(i);
+  }
+}
+loadCellTimers();
+tickAllTimers();
+setInterval(tickAllTimers,1000);
 
 let _cellsBackup={};
 function clearAllCells(){
@@ -2193,6 +2327,200 @@ function renderWallet(){
     <td style="font-size:11px;color:var(--txt2);">${w.note||'—'}</td>
     <td><button class="btn btn-sm btn-red" onclick="deleteWalletEntry('${w.id}')">حذف</button></td>
   </tr>`).join('');
+}
+
+// ===== فواتير المناديب =====
+function refreshInvoiceRiderSelects(){
+  var sorted=[...D.riders].sort((a,b)=>a.name.localeCompare(b.name,'ar'));
+  var opts='<option value="">اختر مندوب</option>'+sorted.map(r=>`<option value="${r.name}">${r.name}</option>`).join('');
+  var sel1=document.getElementById('inv-rider');
+  if(sel1){var cur1=sel1.value;sel1.innerHTML=opts;sel1.value=cur1;}
+  var sel2=document.getElementById('inv-my-name');
+  if(sel2){
+    var myName=localStorage.getItem('fk6_my_name')||'';
+    sel2.innerHTML='<option value="">اختر اسمك</option>'+sorted.map(r=>`<option value="${r.name}">${r.name}</option>`).join('');
+    if(myName) sel2.value=myName;
+  }
+}
+function rememberMyName(){
+  var sel=document.getElementById('inv-my-name');
+  if(sel) localStorage.setItem('fk6_my_name', sel.value||'');
+}
+
+let invItemRowSeq=0;
+function addInvoiceItemRow(){
+  invItemRowSeq++;
+  var rid='invrow_'+invItemRowSeq;
+  var wrap=document.getElementById('inv-items-rows');
+  var div=document.createElement('div');
+  div.id=rid;
+  div.style.cssText='display:flex;gap:8px;align-items:center;';
+  div.innerHTML=`<input placeholder="اسم الصنف" class="inv-item-name" style="flex:1;min-width:120px;">
+    <input type="number" placeholder="الكمية" class="inv-item-qty" value="1" style="max-width:80px;">
+    <button class="btn btn-sm btn-red" onclick="document.getElementById('${rid}').remove()">حذف</button>`;
+  wrap.appendChild(div);
+}
+// صف أول فاضي هيتحط في init بالأسفل
+
+function sendOrderToRider(){
+  var custName=(document.getElementById('inv-cust-name').value||'').trim();
+  var custPhone=(document.getElementById('inv-cust-phone').value||'').trim();
+  var riderSel=document.getElementById('inv-rider');
+  var rider=riderSel.value;
+  var deliveryFee=parseFloat(document.getElementById('inv-delivery').value)||0;
+  var rows=document.querySelectorAll('#inv-items-rows > div');
+  var items=[];
+  rows.forEach(function(row){
+    var name=(row.querySelector('.inv-item-name').value||'').trim();
+    var qty=parseFloat(row.querySelector('.inv-item-qty').value)||1;
+    if(name) items.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,5),name,qty,price:''});
+  });
+  if(!rider){toast('اختار المندوب','var(--amber)');return;}
+  if(!items.length){toast('ضيف صنف واحد على الأقل','var(--amber)');return;}
+  D.invoices.push({
+    id:Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    riderName:rider,custName,custPhone,items,deliveryFee,
+    status:'pending',createdAt:new Date().toISOString(),sentAt:''
+  });
+  saveData();
+  document.getElementById('inv-cust-name').value='';
+  document.getElementById('inv-cust-phone').value='';
+  document.getElementById('inv-delivery').value='';
+  document.getElementById('inv-items-rows').innerHTML='';
+  addInvoiceItemRow();
+  riderSel.value='';
+  toast('اتبعت للمندوب ✓');
+  renderMyInvoices();
+}
+
+function updateInvoiceItemPrice(invId,itemId,val){
+  var inv=D.invoices.find(x=>x.id===invId);
+  if(!inv)return;
+  var item=inv.items.find(x=>x.id===itemId);
+  if(!item)return;
+  item.price=parseFloat(val)||0;
+  saveData();
+  var totalEl=document.getElementById('inv-total-'+invId);
+  if(totalEl) totalEl.textContent=calcInvoiceTotal(inv)+'ج';
+}
+function updateInvoiceDeliveryFee(invId,val){
+  var inv=D.invoices.find(x=>x.id===invId);
+  if(!inv)return;
+  inv.deliveryFee=parseFloat(val)||0;
+  saveData();
+  var totalEl=document.getElementById('inv-total-'+invId);
+  if(totalEl) totalEl.textContent=calcInvoiceTotal(inv)+'ج';
+}
+function calcInvoiceTotal(inv){
+  var sum=0;
+  inv.items.forEach(it=>{ sum += (it.price||0)*(it.qty||1); });
+  return sum + (inv.deliveryFee||0);
+}
+function normalizeEgyptPhone(phone){
+  var p=(phone||'').replace(/[^\d]/g,'');
+  if(p.startsWith('0')) p='2'+p;
+  else if(!p.startsWith('20')) p='20'+p;
+  return p;
+}
+function buildInvoiceText(inv){
+  var lines=['🧾 فاتورة الطلب',''];
+  inv.items.forEach(it=>{
+    var lineTotal=(it.price||0)*(it.qty||1);
+    lines.push((it.qty>1?(it.qty+'× '):'')+it.name+': '+lineTotal+'ج');
+  });
+  lines.push('');
+  if(inv.deliveryFee) lines.push('التوصيل: '+inv.deliveryFee+'ج');
+  lines.push('الإجمالي: '+calcInvoiceTotal(inv)+'ج');
+  lines.push('');
+  lines.push('شكراً لتعاملكم معنا 🙏');
+  return lines.join('\n');
+}
+function shareInvoiceToCustomer(invId){
+  var inv=D.invoices.find(x=>x.id===invId);
+  if(!inv)return;
+  var missing=inv.items.some(it=>!it.price);
+  if(missing){ if(!confirm('فيه أصناف من غير سعر، تكمل برضو؟')) return; }
+  var text=buildInvoiceText(inv);
+  inv.status='sent';
+  inv.sentAt=new Date().toISOString();
+  saveData();
+  var url='https://wa.me/'+(inv.custPhone?normalizeEgyptPhone(inv.custPhone):'')+'?text='+encodeURIComponent(text);
+  window.open(url,'_blank');
+  renderMyInvoices();
+  renderSentInvoicesHistory();
+}
+function deleteInvoice(invId){
+  if(!confirm('تمسح الطلب ده؟'))return;
+  D.invoices=D.invoices.filter(x=>x.id!==invId);
+  saveData();
+  renderMyInvoices();
+  renderSentInvoicesHistory();
+}
+
+function renderMyInvoices(){
+  var wrap=document.getElementById('my-invoices-list');
+  if(!wrap)return;
+  var myName=document.getElementById('inv-my-name')?document.getElementById('inv-my-name').value:'';
+  if(!myName){
+    wrap.innerHTML='<div class="empty">اختار اسمك فوق الأول</div>';
+    return;
+  }
+  var mine=D.invoices.filter(inv=>inv.riderName===myName && inv.status==='pending')
+    .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+  if(!mine.length){
+    wrap.innerHTML='<div class="empty">مفيش طلبات مستنياك دلوقتي 🎉</div>';
+    return;
+  }
+  wrap.innerHTML=mine.map(inv=>{
+    var itemsHtml=inv.items.map(it=>`
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+        <span style="flex:1;font-size:13px;">${it.qty>1?(it.qty+'× '):''}${it.name}</span>
+        <input type="number" placeholder="السعر" value="${it.price||''}" style="max-width:100px;" oninput="updateInvoiceItemPrice('${inv.id}','${it.id}',this.value)">
+        <span style="font-size:11px;color:var(--txt2);">ج</span>
+      </div>`).join('');
+    return `<div class="rider-reg-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div>
+          <div style="font-weight:700;">${inv.custName||'زبون'}</div>
+          <div style="font-size:11px;color:var(--txt2);direction:ltr;text-align:right;">${inv.custPhone||'—'}</div>
+        </div>
+        <span style="font-size:11px;color:var(--txt2);">${fmtDT(inv.createdAt)}</span>
+      </div>
+      ${itemsHtml}
+      <div style="display:flex;gap:8px;align-items:center;margin:8px 0;">
+        <span style="flex:1;font-size:13px;color:var(--txt2);">التوصيل</span>
+        <input type="number" placeholder="0" value="${inv.deliveryFee||''}" style="max-width:100px;" oninput="updateInvoiceDeliveryFee('${inv.id}',this.value)">
+        <span style="font-size:11px;color:var(--txt2);">ج</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bord);padding-top:8px;margin-bottom:10px;">
+        <span style="font-weight:700;">الإجمالي</span>
+        <span id="inv-total-${inv.id}" style="font-weight:700;color:var(--acc);font-size:16px;">${calcInvoiceTotal(inv)}ج</span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-acc" style="flex:1;" onclick="shareInvoiceToCustomer('${inv.id}')">📤 مشاركة واتساب</button>
+        <button class="btn btn-sm btn-red" onclick="deleteInvoice('${inv.id}')">حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSentInvoicesHistory(){
+  var wrap=document.getElementById('sent-invoices-list');
+  if(!wrap)return;
+  var sent=D.invoices.filter(inv=>inv.status==='sent')
+    .sort((a,b)=>(b.sentAt||'').localeCompare(a.sentAt||'')).slice(0,15);
+  if(!sent.length){
+    wrap.innerHTML='<div class="empty">لسه مفيش فواتير اتبعتت</div>';
+    return;
+  }
+  wrap.innerHTML=sent.map(inv=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--surf2);border-radius:8px;padding:10px;">
+      <div>
+        <div style="font-weight:600;font-size:13px;">${inv.custName||'زبون'} <span style="color:var(--txt2);font-size:11px;">— ${inv.riderName}</span></div>
+        <div style="font-size:11px;color:var(--txt2);">${fmtDT(inv.sentAt)}</div>
+      </div>
+      <div style="font-weight:700;color:var(--acc);">${calcInvoiceTotal(inv)}ج</div>
+    </div>`).join('');
 }
 
 // ===== History =====
@@ -3408,6 +3736,8 @@ document.getElementById('rpt-month').value=thisMonth();
 document.getElementById('settle-day-pick').value=today();
 document.getElementById('settle-month-pick').value=thisMonth();
 document.getElementById('wallet-earn-date').value=today();
+addInvoiceItemRow();
+refreshInvoiceRiderSelects();
 document.getElementById('wallet-wd-date').value=today();
 
 // استعادة الخلايا لو في حاجة محفوظة
