@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>حسابات اليومية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1115; --surf:#171a21; --surf2:#1e222b; --bord:#2a2f3a;
+  --txt:#e8eaed; --txt2:#8b92a3;
+  --acc:#f5a623; --green:#2ecc71; --red:#e74c3c; --blue:#3498db; --purple:#9b59b6; --amber:#f39c12;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:'Cairo',sans-serif;}
+input,select,button{font-family:'Cairo',sans-serif;}
+input,select{background:var(--surf2);border:1px solid var(--bord);color:var(--txt);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;}
+input:focus,select:focus{border-color:var(--acc);}
+.btn{background:var(--surf2);border:1px solid var(--bord);color:var(--txt);border-radius:8px;padding:9px 16px;font-size:14px;cursor:pointer;font-weight:600;}
+.btn:hover{filter:brightness(1.1);}
+.btn-acc{background:var(--acc);color:#1a1a1a;border:none;}
+.btn-red{background:transparent;color:var(--red);border:1px solid var(--red);}
+.btn-sm{padding:6px 10px;font-size:12px;}
+.card{background:var(--surf);border:1px solid var(--bord);border-radius:12px;padding:14px;margin-bottom:14px;}
+.card-title{font-weight:700;font-size:14px;margin-bottom:10px;color:var(--acc);}
+.empty{color:var(--txt2);font-size:13px;text-align:center;padding:18px;}
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--surf);border-bottom:1px solid var(--bord);flex-wrap:wrap;gap:8px;}
+.logo{font-weight:800;font-size:18px;color:var(--acc);}
+.logo small{font-weight:400;font-size:11px;color:var(--txt2);display:block;}
+.main{max-width:980px;margin:0 auto;padding:16px;}
+.twrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:600px;}
+th,td{padding:6px 8px;text-align:center;border-bottom:1px solid var(--bord);white-space:nowrap;}
+tbody tr:nth-child(odd){background:rgba(231,76,60,.14);}
+tbody tr:nth-child(even){background:rgba(46,204,113,.12);}
+tbody tr:hover{background:#242a35;}
+th{color:var(--txt2);font-size:12px;font-weight:700;background:var(--surf2);}
+td input{width:85px;text-align:center;}
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.stat-box{background:var(--surf2);border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:110px;}
+.stat-box .n{font-size:20px;font-weight:800;color:var(--acc);}
+.stat-box .l{font-size:11px;color:var(--txt2);margin-top:2px;}
+@media(max-width:700px){ .hdr{flex-direction:column;align-items:flex-start;} }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div id="login-gate" style="position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--surf);border:1px solid var(--bord);border-radius:14px;padding:24px;width:100%;max-width:360px;">
+    <div style="font-size:19px;font-weight:800;color:var(--acc);margin-bottom:4px;text-align:center;">📒 حسابات اليومية</div>
+    <div style="font-size:12px;color:var(--txt2);text-align:center;margin-bottom:18px;">سجل دخول عشان تفتح البرنامج</div>
+    <input type="email" id="login-email" placeholder="الإيميل" style="width:100%;margin-bottom:8px;" autocomplete="username">
+    <input type="password" id="login-pass" placeholder="الباسورد" style="width:100%;margin-bottom:12px;" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin();">
+    <button class="btn btn-acc" style="width:100%;" onclick="doLogin()">دخول</button>
+    <div id="login-err" style="color:var(--red);font-size:12px;margin-top:10px;text-align:center;"></div>
+    <div id="login-loading" style="color:var(--txt2);font-size:12px;margin-top:10px;text-align:center;display:none;">...بيتم التحقق</div>
+    <div style="text-align:center;margin-top:12px;">
+      <span style="color:var(--txt2);font-size:12px;cursor:pointer;text-decoration:underline;" onclick="forgotPassword()">نسيت الباسورد؟</span>
+    </div>
+  </div>
+</div>
+
+<div class="hdr" id="app-hdr" style="display:none;">
+  <div class="logo">📒 حسابات اليومية <small>درج الكاش، تصفية المناديب، والمحفظة</small></div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+    <button class="btn btn-sm" onclick="shiftDay(-1)">◀ يوم قبل</button>
+    <input type="date" id="day-pick" onchange="renderAll()">
+    <button class="btn btn-sm" onclick="shiftDay(1)">يوم بعد ▶</button>
+    <button class="btn btn-sm btn-acc" onclick="document.getElementById('day-pick').value=today();renderAll();">النهارده</button>
+    <span id="sync-status" style="font-size:11px;color:var(--txt2);white-space:nowrap;">☁️ ...</span>
+    <button class="btn btn-sm" onclick="doLogout()">خروج</button>
+  </div>
+</div>
+<div id="app-day-hint" style="display:none;text-align:center;font-size:11px;color:var(--txt2);padding:4px 16px;">💡 غيّر التاريخ فوق لأي يوم جديد وهيفتحلك صفحة فاضية تلقائي لبياناته</div>
+
+<div class="main" id="app-main" style="display:none;">
+
+  <!-- ===== درج الكاش (وارد / خروج / وارد تراكمي) ===== -->
+  <div class="card">
+    <div class="card-title">🧮 حاسبة ضريبة التحويل</div>
+    <p style="font-size:12px;color:var(--txt2);margin-bottom:10px;">اكتب المبلغ اللي حوّله الزبون، وهي هتحسبلك الضريبة والصافي اللي تدّيه للمندوب أوتوماتيك.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
+      <select id="calc-type" onchange="calcTransferFeeUI()">
+        <option value="vf">فودافون كاش</option>
+        <option value="insta">إنستا</option>
+      </select>
+      <input id="calc-amount" type="number" placeholder="المبلغ اللي حوّله الزبون" style="max-width:170px;" oninput="calcTransferFeeUI()">
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="n" id="calc-fee" style="color:var(--red);">0</div><div class="l">الضريبة</div></div>
+      <div class="stat-box"><div class="n" id="calc-net" style="color:var(--green);">0</div><div class="l">الصافي (يتدّي للمندوب)</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">درج الكاش</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+      <span style="font-size:12px;color:var(--txt2);">الرصيد الافتتاحي</span>
+      <input id="cd-opening" type="number" placeholder="0" style="max-width:120px;" onchange="setOpening(this.value)">
+    </div>
+    <button class="btn btn-acc" onclick="addCashRow()" style="margin-bottom:10px;">+ إضافة صف</button>
+    <div class="twrap">
+      <table><thead><tr>
+        <th></th><th>اسم الوارد</th><th>خروج</th><th></th><th>استلام</th><th>سبب الاستلام</th><th>وارد</th><th></th>
+      </tr></thead><tbody id="cash-tb"></tbody></table>
+    </div>
+    <div class="stat-row" style="margin-top:12px;">
+      <div class="stat-box"><div class="n" id="cash-expected">0</div><div class="l">المفروض يكون موجود</div></div>
+      <div class="stat-box"><div class="n" id="cash-istilam-total" style="color:var(--blue);">0</div><div class="l">إجمالي الاستلام (انستا/فودافون كاش)</div></div>
+      <div class="stat-box">
+        <input id="cash-actual" type="number" placeholder="اللي لقيته فعليًا" style="width:100%;max-width:150px;" oninput="checkCashDiff()">
+      </div>
+    </div>
+    <div id="cash-diff" style="font-weight:700;margin-top:6px;"></div>
+  </div>
+
+  <!-- ===== تصفية المناديب ===== -->
+  <div class="card">
+    <div class="card-title">تصفية المناديب</div>
+    <button class="btn btn-acc" onclick="addRiderRow()" style="margin-bottom:10px;">+ إضافة صف</button>
+    <div class="twrap">
+      <table><thead><tr>
+        <th>له فلوس</th><th>تصفيه</th><th></th><th>رقم الدرج</th><th>دين لينا</th><th>دين علينا</th><th></th>
+      </tr></thead><tbody id="rider-tb"></tbody></table>
+    </div>
+    <div style="text-align:left;margin-top:8px;font-weight:700;color:var(--acc);">الإجمالي: <span id="rider-total">0</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⏳ المناديب اللي لسه ما صفوش</div>
+    <div id="unsettled-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💳 ديون على الناس (ثابتة كل يوم لحد ما تتسدد)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;">
+      <input id="debt-name" placeholder="اسم اللي عليه الدين" style="max-width:160px;">
+      <input id="debt-amount" type="number" placeholder="المبلغ" style="max-width:110px;">
+      <input id="debt-note" placeholder="ملاحظة (اختياري)" style="max-width:160px;">
+      <button class="btn btn-acc" onclick="addDebt()">تسجيل دين +</button>
+    </div>
+    <div style="font-weight:700;color:var(--acc);margin-bottom:10px;">إجمالي الديون: <span id="debt-total">0</span></div>
+    <div id="debt-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📷 تحليل صورة (تحقق من الحسابات)</div>
+    <p style="font-size:12px;color:var(--txt2);margin-bottom:10px;">ارفع صورة (كشف حساب، سكرين شوت، ورقة مكتوب فيها أرقام) والبرنامج هيقرا الأرقام منها ويجمعها ويقارنها باللي مسجل عندك.</p>
+    <label class="btn btn-acc" style="cursor:pointer;display:inline-block;">اختار صورة
+      <input type="file" accept="image/*" id="ocr-file" style="display:none;" onchange="analyzeImage(this.files[0])">
+    </label>
+    <span id="ocr-status" style="font-size:12px;color:var(--txt2);margin-inline-start:10px;"></span>
+    <div id="ocr-result" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- ===== استلام / تحويل / وارد (المحفظة) ===== -->
+  <div class="card">
+    <div class="card-title">استلام وتحويل (فودافون كاش / إنستاباي)</div>
+    <button class="btn btn-acc" onclick="addWalletRow()" style="margin-bottom:10px;">+ إضافة صف</button>
+    <div class="twrap">
+      <table><thead><tr>
+        <th></th><th>استلام</th><th>تحويل</th><th>وارد</th><th>مكنة الرصيد</th><th>اسم الشحن</th><th>ضريبه</th><th>عهده ملفوف</th><th>اسم صاحب العهدة</th><th></th>
+      </tr></thead><tbody id="wallet-tb"></tbody></table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== Firebase (نفس حساب فركة كعب) =====
+const firebaseConfig = {
+  apiKey: "AIzaSyB4-xsCMlctbpLqymC1KUYH6v_wFkdaarc",
+  authDomain: "my-work-9ade9.firebaseapp.com",
+  projectId: "my-work-9ade9",
+  storageBucket: "my-work-9ade9.firebasestorage.app",
+  messagingSenderId: "843750690209",
+  appId: "1:843750690209:web:710398fd8f81cd97100fe0",
+  measurementId: "G-SQ91ER0ZJE"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+try{ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
+const dbFS = firebase.firestore();
+try{ dbFS.enablePersistence({synchronizeTabs:true}); }catch(e){}
+
+let suppressCloudPush=false;
+let cloudPushTimer=null;
+function setSyncStatus(txt){ var el=document.getElementById('sync-status'); if(el) el.textContent=txt; }
+
+function doLogin(){
+  var email=(document.getElementById('login-email').value||'').trim();
+  var pass=document.getElementById('login-pass').value||'';
+  var err=document.getElementById('login-err');
+  err.textContent='';
+  if(!email||!pass){err.textContent='اكتب الإيميل والباسورد';return;}
+  document.getElementById('login-loading').style.display='block';
+  auth.signInWithEmailAndPassword(email,pass).then(function(){
+    try{ localStorage.setItem('hs_saved_email', email); }catch(e){}
+  }).catch(function(e){
+    document.getElementById('login-loading').style.display='none';
+    err.textContent='الإيميل أو الباسورد غلط';
+  });
+}
+function doLogout(){
+  if(!confirm('تخرج من البرنامج؟'))return;
+  auth.signOut();
+}
+function forgotPassword(){
+  var email=(document.getElementById('login-email').value||'').trim();
+  var err=document.getElementById('login-err');
+  err.textContent='';
+  if(!email){ err.textContent='اكتب إيميلك الأول فوق، بعدين دوس "نسيت الباسورد"'; err.style.color='var(--amber)'; return; }
+  auth.sendPasswordResetEmail(email).then(function(){
+    err.style.color='var(--green)';
+    err.textContent='بعتنالك رابط لإيميلك، افتحه واعمل باسورد جديد ✓';
+  }).catch(function(e){
+    err.style.color='var(--red)';
+    err.textContent='مقدرناش نبعت الإيميل - تأكد إن الإيميل صح';
+  });
+}
+function hesabatDocRef(){
+  if(!auth.currentUser) return null;
+  // مسار منفصل عن فركة كعب عشان البيانات متتلخبطش مع بعض
+  return dbFS.collection('users').doc(auth.currentUser.uid).collection('hesabat').doc('main');
+}
+function cloudPullOnce(){
+  var ref=hesabatDocRef();
+  if(!ref)return;
+  setSyncStatus('⏳ بيجيب بياناتك...');
+  ref.get().then(function(doc){
+    if(doc.exists){
+      var cloud=doc.data();
+      D.cashRows=cloud.cashRows||[];
+      D.cashOpening=cloud.cashOpening||{};
+      D.riderRows=cloud.riderRows||[];
+      D.walletRows=cloud.walletRows||[];
+      D.debts=cloud.debts||[];
+      suppressCloudPush=true;
+      saveData();
+      renderAll();
+      setSyncStatus('☁️ متزامن');
+    }else{
+      cloudPush();
+      setSyncStatus('☁️ متزامن (أول مرة)');
+    }
+  }).catch(function(e){
+    setSyncStatus('⚠️ شغال محلي - هيتزامن لما النت يرجع');
+  });
+}
+function scheduleCloudPush(){
+  if(!auth.currentUser)return;
+  if(suppressCloudPush){suppressCloudPush=false;return;}
+  clearTimeout(cloudPushTimer);
+  setSyncStatus('⏳ بيرفع...');
+  cloudPushTimer=setTimeout(cloudPush,1200);
+}
+function cloudPush(){
+  var ref=hesabatDocRef();
+  if(!ref)return;
+  var payload={
+    cashRows:D.cashRows,cashOpening:D.cashOpening,riderRows:D.riderRows,
+    walletRows:D.walletRows,debts:D.debts,updatedAt:new Date().toISOString()
+  };
+  ref.set(payload).then(function(){
+    setSyncStatus('☁️ متزامن');
+  }).catch(function(e){
+    setSyncStatus('⚠️ مفيش نت - هيتزامن تلقائي لما يرجع');
+  });
+}
+auth.onAuthStateChanged(function(user){
+  var gate=document.getElementById('login-gate');
+  var hdr=document.getElementById('app-hdr');
+  var main=document.getElementById('app-main');
+  var hint=document.getElementById('app-day-hint');
+  if(user){
+    gate.style.display='none';
+    hdr.style.display='flex';
+    main.style.display='block';
+    hint.style.display='block';
+    cloudPullOnce();
+  }else{
+    gate.style.display='flex';
+    hdr.style.display='none';
+    main.style.display='none';
+    hint.style.display='none';
+    document.getElementById('login-pass').value='';
+    document.getElementById('login-loading').style.display='none';
+    try{
+      var savedEmail=localStorage.getItem('hs_saved_email');
+      if(savedEmail) document.getElementById('login-email').value=savedEmail;
+    }catch(e){}
+  }
+});
+
+// ===== Data =====
+let D={cashRows:[], cashOpening:{}, riderRows:[], walletRows:[], debts:[]};
+function loadData(){
+  try{D.cashRows=JSON.parse(localStorage.getItem('hs_cash')||'[]');}catch(e){D.cashRows=[];}
+  try{D.cashOpening=JSON.parse(localStorage.getItem('hs_cash_opening')||'{}');}catch(e){D.cashOpening={};}
+  try{D.riderRows=JSON.parse(localStorage.getItem('hs_riders')||'[]');}catch(e){D.riderRows=[];}
+  try{D.walletRows=JSON.parse(localStorage.getItem('hs_wallet')||'[]');}catch(e){D.walletRows=[];}
+  try{D.debts=JSON.parse(localStorage.getItem('hs_debts')||'[]');}catch(e){D.debts=[];}
+}
+function saveData(){
+  localStorage.setItem('hs_cash',JSON.stringify(D.cashRows));
+  localStorage.setItem('hs_cash_opening',JSON.stringify(D.cashOpening));
+  localStorage.setItem('hs_riders',JSON.stringify(D.riderRows));
+  localStorage.setItem('hs_wallet',JSON.stringify(D.walletRows));
+  localStorage.setItem('hs_debts',JSON.stringify(D.debts));
+  scheduleCloudPush();
+}
+loadData();
+
+// ===== حاسبة ضريبة التحويل =====
+function calcTransferFee(type, amount){
+  if(!amount || amount<=0) return 0;
+  if(type==='insta') return 5;
+  // فودافون كاش: أقل من 500 = 5ج، ومن 500 كل 1000ج زيادة = +10ج ضريبة
+  if(amount<500) return 5;
+  var bracket=Math.floor((amount-500)/1000);
+  return 10 + bracket*10;
+}
+function calcTransferFeeUI(){
+  var type=document.getElementById('calc-type').value;
+  var amount=parseFloat(document.getElementById('calc-amount').value)||0;
+  var fee=calcTransferFee(type, amount);
+  var net=amount-fee;
+  document.getElementById('calc-fee').textContent=fee;
+  document.getElementById('calc-net').textContent=amount?net:0;
+}
+
+function today(){
+  var d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function shiftDay(delta){
+  var el=document.getElementById('day-pick');
+  var val=el.value||today();
+  var d=new Date(val+'T00:00:00');
+  d.setDate(d.getDate()+delta);
+  el.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  renderAll();
+}
+function curDay(){
+  var el=document.getElementById('day-pick');
+  return (el&&el.value)||today();
+}
+function toast(msg,color){
+  color=color||'var(--green)';
+  var t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--surf2);border:1px solid '+color+';color:'+color+';padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.remove(); },2200);
+}
+
+// ===== درج الكاش =====
+function setOpening(val){
+  D.cashOpening[curDay()]=parseFloat(val)||0;
+  saveData();
+  renderCash();
+}
+function addCashRow(){
+  D.cashRows.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),date:curDay(),in:0,inNote:'',out:0,istilam:0,istilamNote:'',reviewMark:''});
+  saveData();
+  renderCash();
+}
+function updateCashCell(id,field,val){
+  var e=D.cashRows.find(x=>x.id===id);
+  if(!e)return;
+  if(field==='inNote'||field==='istilamNote') e[field]=val;
+  else e[field]=parseFloat(val)||0;
+  saveData();
+  recalcCash();
+}
+function updateReviewMark(id,val){
+  var e=D.cashRows.find(x=>x.id===id);
+  if(!e)return;
+  e.reviewMark=val;
+  saveData();
+}
+function deleteCashRow(id){
+  if(!confirm('تمسح الصف ده؟'))return;
+  D.cashRows=D.cashRows.filter(x=>x.id!==id);
+  saveData();
+  renderCash();
+}
+function checkCashDiff(){
+  var expEl=document.getElementById('cash-expected');
+  var diffEl=document.getElementById('cash-diff');
+  var actualEl=document.getElementById('cash-actual');
+  var expected=parseFloat(expEl.dataset.val)||0;
+  var actual=actualEl.value===''?null:(parseFloat(actualEl.value)||0);
+  if(actual===null){ diffEl.textContent=''; return; }
+  var diff=actual-expected;
+  if(diff===0){ diffEl.style.color='var(--green)'; diffEl.textContent='✅ مطابق تمامًا'; }
+  else if(diff>0){ diffEl.style.color='var(--blue)'; diffEl.textContent='زيادة '+diff+'ج'; }
+  else{ diffEl.style.color='var(--red)'; diffEl.textContent='⚠️ ناقص '+Math.abs(diff)+'ج'; }
+}
+function recalcCash(){
+  var opening=D.cashOpening[curDay()]||0;
+  var running=opening;
+  var istilamTotal=0;
+  var tb=document.getElementById('cash-tb');
+  tb.querySelectorAll('tr[data-id]').forEach(function(tr){
+    var e=D.cashRows.find(x=>x.id===tr.getAttribute('data-id'));
+    if(!e)return;
+    running += (e.in||0)-(e.out||0);
+    istilamTotal += (e.istilam||0);
+    var cell=tr.querySelector('.cash-running');
+    if(cell) cell.textContent=running;
+  });
+  var expEl=document.getElementById('cash-expected');
+  expEl.textContent=running;
+  expEl.dataset.val=running;
+  document.getElementById('cash-istilam-total').textContent=istilamTotal;
+  checkCashDiff();
+}
+function renderCash(){
+  var d=curDay();
+  document.getElementById('cd-opening').value=D.cashOpening[d]||'';
+  var rows=D.cashRows.filter(x=>x.date===d);
+  var tb=document.getElementById('cash-tb');
+  var running=D.cashOpening[d]||0;
+  var istilamTotal=0;
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="8" class="empty">لسه مفيش صفوف — دوس "+ إضافة صف"</td></tr>';
+  }else{
+    tb.innerHTML=rows.map(function(x){
+      running += (x.in||0)-(x.out||0);
+      istilamTotal += (x.istilam||0);
+      var mark=x.reviewMark||'';
+      return `<tr data-id="${x.id}">
+        <td><input type="number" value="${x.in||''}" placeholder="0" style="color:var(--green);font-weight:700;" oninput="updateCashCell('${x.id}','in',this.value)"></td>
+        <td><input type="text" value="${x.inNote||''}" placeholder="شحن نت/رصيد..." style="width:120px;" oninput="updateCashCell('${x.id}','inNote',this.value)"></td>
+        <td><input type="number" value="${x.out||''}" placeholder="0" style="color:var(--red);font-weight:700;" oninput="updateCashCell('${x.id}','out',this.value)"></td>
+        <td><input type="text" value="${mark}" style="width:50px;text-align:center;font-weight:700;font-size:16px;color:var(--amber);" oninput="updateReviewMark('${x.id}',this.value)"></td>
+        <td><input type="number" value="${x.istilam||''}" placeholder="0" style="color:var(--blue);font-weight:700;" oninput="updateCashCell('${x.id}','istilam',this.value)"></td>
+        <td><input type="text" value="${x.istilamNote||''}" placeholder="سبب الاستلام" style="width:120px;" oninput="updateCashCell('${x.id}','istilamNote',this.value)"></td>
+        <td class="cash-running" style="font-weight:700;">${running}</td>
+        <td><button class="btn btn-sm btn-red" onclick="deleteCashRow('${x.id}')">حذف</button></td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('cash-expected').textContent=running;
+  document.getElementById('cash-expected').dataset.val=running;
+  document.getElementById('cash-istilam-total').textContent=istilamTotal;
+  checkCashDiff();
+}
+
+// ===== تصفية المناديب =====
+function addRiderRow(){
+  var d=curDay();
+  var existing=D.riderRows.filter(x=>x.date===d);
+  var nextIdx=existing.length?Math.max.apply(null,existing.map(x=>x.idx||0))+1:1;
+  D.riderRows.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),date:d,idx:nextIdx,name:'',noteBox:'',cashCount:'',deinLena:'',deinAlena:''});
+  saveData();
+  renderRiders();
+  renderUnsettledRiders();
+}
+function updateRiderCell(id,field,val){
+  var e=D.riderRows.find(x=>x.id===id);
+  if(!e)return;
+  e[field]=val;
+  saveData();
+  recalcRiderTotal();
+  renderUnsettledRiders();
+}
+function deleteRiderRow(id){
+  if(!confirm('تمسح الصف ده؟'))return;
+  D.riderRows=D.riderRows.filter(x=>x.id!==id);
+  saveData();
+  renderRiders();
+  renderUnsettledRiders();
+}
+function recalcRiderTotal(){
+  var d=curDay();
+  var rows=D.riderRows.filter(x=>x.date===d);
+  var total=0;
+  rows.forEach(function(x){ total += parseFloat(x.cashCount)||0; });
+  var totEl=document.getElementById('rider-total');
+  if(totEl) totEl.textContent=total;
+}
+function renderRiders(){
+  var d=curDay();
+  var rows=D.riderRows.filter(x=>x.date===d).sort((a,b)=>(a.idx||0)-(b.idx||0));
+  var tb=document.getElementById('rider-tb');
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="7" class="empty">لسه مفيش صفوف — دوس "+ إضافة صف"</td></tr>';
+    document.getElementById('rider-total').textContent='0';
+    return;
+  }
+  tb.innerHTML=rows.map(function(x){
+    return `<tr>
+      <td style="font-weight:700;color:var(--acc);">${x.idx}</td>
+      <td><input type="text" value="${x.name||''}" placeholder="اسم المندوب" oninput="updateRiderCell('${x.id}','name',this.value)"></td>
+      <td><input type="text" value="${x.noteBox||''}" style="width:70px;" oninput="updateRiderCell('${x.id}','noteBox',this.value)"></td>
+      <td><input type="text" value="${x.cashCount||''}" placeholder="المبلغ" style="width:70px;" oninput="updateRiderCell('${x.id}','cashCount',this.value)"></td>
+      <td><input type="text" value="${x.deinLena||''}" placeholder="—" oninput="updateRiderCell('${x.id}','deinLena',this.value)"></td>
+      <td><input type="text" value="${x.deinAlena||''}" placeholder="—" oninput="updateRiderCell('${x.id}','deinAlena',this.value)"></td>
+      <td><button class="btn btn-sm btn-red" onclick="deleteRiderRow('${x.id}')">حذف</button></td>
+    </tr>`;
+  }).join('');
+  recalcRiderTotal();
+}
+function renderUnsettledRiders(){
+  var wrap=document.getElementById('unsettled-list');
+  if(!wrap)return;
+  var unsettled=D.riderRows.filter(x=>x.name && !x.cashCount)
+    .sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  if(!unsettled.length){
+    wrap.innerHTML='<div class="empty">الحمد لله، كله مصفي 🎉</div>';
+    return;
+  }
+  wrap.innerHTML=unsettled.map(function(x){
+    return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--surf2);border-radius:8px;padding:10px 14px;">
+      <div><span style="font-weight:700;">${x.name}</span> <span style="color:var(--txt2);font-size:12px;">— من يوم ${x.date}</span></div>
+      <button class="btn btn-sm btn-red" onclick="deleteRiderRow('${x.id}')">مسح</button>
+    </div>`;
+  }).join('');
+}
+
+// ===== ديون على الناس (ثابتة، مش مرتبطة بيوم معين) =====
+function addDebt(){
+  var name=(document.getElementById('debt-name').value||'').trim();
+  var amount=parseFloat(document.getElementById('debt-amount').value)||0;
+  var note=(document.getElementById('debt-note').value||'').trim();
+  if(!name){toast('اكتب اسم اللي عليه الدين','var(--amber)');return;}
+  if(!amount){toast('اكتب المبلغ','var(--amber)');return;}
+  D.debts.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),name,amount,note,createdAt:new Date().toISOString(),date:curDay()});
+  saveData();
+  document.getElementById('debt-name').value='';
+  document.getElementById('debt-amount').value='';
+  document.getElementById('debt-note').value='';
+  renderDebts();
+  toast('اتسجل الدين ✓');
+}
+function deleteDebt(id){
+  if(!confirm('اتسدد الدين ده؟ هيتمسح خالص.'))return;
+  D.debts=D.debts.filter(x=>x.id!==id);
+  saveData();
+  renderDebts();
+}
+function renderDebts(){
+  var wrap=document.getElementById('debt-list');
+  var totEl=document.getElementById('debt-total');
+  if(!wrap||!totEl)return;
+  if(!D.debts.length){
+    wrap.innerHTML='<div class="empty">مفيش ديون مسجلة دلوقتي</div>';
+    totEl.textContent='0';
+    return;
+  }
+  var total=0;
+  wrap.innerHTML=D.debts.map(function(x){
+    total+=x.amount||0;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;background:var(--surf2);border-radius:8px;padding:10px 14px;">
+      <div>
+        <span style="font-weight:700;">${x.name}</span>
+        <span style="color:var(--acc);font-weight:700;"> — ${x.amount}ج</span>
+        ${x.note?`<span style="color:var(--txt2);font-size:12px;"> (${x.note})</span>`:''}
+        <div style="color:var(--txt2);font-size:11px;">من يوم ${x.date}</div>
+      </div>
+      <button class="btn btn-sm btn-red" onclick="deleteDebt('${x.id}')">اتسدد ✓</button>
+    </div>`;
+  }).join('');
+  totEl.textContent=total;
+}
+
+// ===== استلام / تحويل / وارد (المحفظة) =====
+function addWalletRow(){
+  D.walletRows.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),date:curDay(),type:'',istilam:0,tahweel:0,makana:'',makanaName:'',dariba:'',ohda:'',ohdaName:''});
+  saveData();
+  renderWallet();
+}
+function updateWalletCell(id,field,val){
+  var e=D.walletRows.find(x=>x.id===id);
+  if(!e)return;
+  if(field==='istilam'||field==='tahweel') e[field]=parseFloat(val)||0;
+  else e[field]=val;
+  saveData();
+  recalcWallet();
+}
+function deleteWalletRow(id){
+  if(!confirm('تمسح الصف ده؟'))return;
+  D.walletRows=D.walletRows.filter(x=>x.id!==id);
+  saveData();
+  renderWallet();
+}
+function recalcWallet(){
+  var running=0;
+  var tb=document.getElementById('wallet-tb');
+  tb.querySelectorAll('tr[data-id]').forEach(function(tr){
+    var e=D.walletRows.find(x=>x.id===tr.getAttribute('data-id'));
+    if(!e)return;
+    running += (e.istilam||0)-(e.tahweel||0);
+    var cell=tr.querySelector('.wallet-running');
+    if(cell) cell.textContent=running;
+  });
+}
+function renderWallet(){
+  var d=curDay();
+  var rows=D.walletRows.filter(x=>x.date===d);
+  var tb=document.getElementById('wallet-tb');
+  var running=0;
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="10" class="empty">لسه مفيش صفوف — دوس "+ إضافة صف"</td></tr>';
+    return;
+  }
+  tb.innerHTML=rows.map(function(x){
+    running += (x.istilam||0)-(x.tahweel||0);
+    return `<tr data-id="${x.id}">
+      <td><input type="text" value="${x.type||''}" placeholder="انستا/فودافون" style="width:90px;" oninput="updateWalletCell('${x.id}','type',this.value)"></td>
+      <td><input type="number" value="${x.istilam||''}" placeholder="0" style="color:var(--green);font-weight:700;" oninput="updateWalletCell('${x.id}','istilam',this.value)"></td>
+      <td><input type="number" value="${x.tahweel||''}" placeholder="0" style="color:var(--red);font-weight:700;" oninput="updateWalletCell('${x.id}','tahweel',this.value)"></td>
+      <td class="wallet-running" style="font-weight:700;">${running}</td>
+      <td><input type="text" value="${x.makana||''}" placeholder="—" style="width:80px;" oninput="updateWalletCell('${x.id}','makana',this.value)"></td>
+      <td><input type="text" value="${x.makanaName||''}" placeholder="اسم الشحن" style="width:100px;" oninput="updateWalletCell('${x.id}','makanaName',this.value)"></td>
+      <td><input type="text" value="${x.dariba||''}" placeholder="—" style="width:70px;" oninput="updateWalletCell('${x.id}','dariba',this.value)"></td>
+      <td><input type="text" value="${x.ohda||''}" placeholder="—" style="width:80px;" oninput="updateWalletCell('${x.id}','ohda',this.value)"></td>
+      <td><input type="text" value="${x.ohdaName||''}" placeholder="اسم اللي واخد العهدة" style="width:120px;" oninput="updateWalletCell('${x.id}','ohdaName',this.value)"></td>
+      <td><button class="btn btn-sm btn-red" onclick="deleteWalletRow('${x.id}')">حذف</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== تحليل صورة مجانًا (Tesseract.js شغال جوه المتصفح، من غير API ولا فلوس) =====
+async function analyzeImage(file){
+  if(!file)return;
+  var statusEl=document.getElementById('ocr-status');
+  var resultEl=document.getElementById('ocr-result');
+  resultEl.innerHTML='';
+  statusEl.textContent='⏳ بيقرا الصورة... (ممكن ياخد شوية ثواني أول مرة)';
+  try{
+    var result=await Tesseract.recognize(file,'eng',{
+      logger:function(m){
+        if(m.status==='recognizing text'){
+          statusEl.textContent='⏳ بيقرا... '+Math.round((m.progress||0)*100)+'%';
+        }
+      }
+    });
+    var text=result.data.text||'';
+    var numbers=(text.match(/\d[\d,\.]{1,9}\d|\d/g)||[])
+      .map(function(s){ return parseFloat(s.replace(/,/g,'')); })
+      .filter(function(n){ return !isNaN(n) && n>0; });
+    if(!numbers.length){
+      statusEl.textContent='';
+      resultEl.innerHTML='<div class="empty">مقدرناش نلاقي أرقام واضحة في الصورة — جرب صورة أوضح</div>';
+      return;
+    }
+    var sum=numbers.reduce(function(a,b){return a+b;},0);
+    statusEl.textContent='✅ خلص القراءة';
+    resultEl.innerHTML=`
+      <div style="font-size:12px;color:var(--txt2);margin-bottom:6px;">الأرقام اللي اتقرت من الصورة:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+        ${numbers.map(function(n){return `<span style="background:var(--surf2);border-radius:6px;padding:4px 10px;font-weight:700;">${n}</span>`;}).join('')}
+      </div>
+      <div style="font-weight:700;color:var(--acc);margin-bottom:10px;">إجمالي الأرقام اللي في الصورة: ${sum}</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:12px;color:var(--txt2);">قارنه بالمبلغ ده:</span>
+        <input type="number" id="ocr-compare" placeholder="اكتب الرقم اللي عندك" style="max-width:140px;" oninput="compareOcrSum(${sum})">
+      </div>
+      <div id="ocr-diff" style="font-weight:700;margin-top:8px;"></div>
+    `;
+  }catch(e){
+    statusEl.textContent='⚠️ حصلت مشكلة في قراءة الصورة، جرب تاني';
+  }
+}
+function compareOcrSum(sum){
+  var el=document.getElementById('ocr-compare');
+  var diffEl=document.getElementById('ocr-diff');
+  if(!el||!diffEl)return;
+  if(el.value===''){ diffEl.textContent=''; return; }
+  var target=parseFloat(el.value)||0;
+  var diff=sum-target;
+  if(diff===0){ diffEl.style.color='var(--green)'; diffEl.textContent='✅ مطابق تمامًا'; }
+  else{ diffEl.style.color='var(--red)'; diffEl.textContent='⚠️ فيه فرق '+Math.abs(diff)+'ج'; }
+}
+
+function renderAll(){
+  renderCash();
+  renderRiders();
+  renderUnsettledRiders();
+  renderDebts();
+  renderWallet();
+}
+
+// ===== تنقل بالسهم بين الخانات (زي إكسيل) =====
+document.addEventListener('keydown', function(e){
+  if(e.key!=='ArrowDown' && e.key!=='ArrowUp') return;
+  var el=e.target;
+  if(!el || el.tagName!=='INPUT') return;
+  var td=el.closest('td');
+  if(!td) return;
+  var tr=td.closest('tr');
+  if(!tr) return;
+  var tbody=tr.parentElement;
+  if(!tbody) return;
+  var cellIndex=Array.prototype.indexOf.call(tr.children, td);
+  var rowIndex=Array.prototype.indexOf.call(tbody.children, tr);
+  var targetRow = e.key==='ArrowDown' ? tbody.children[rowIndex+1] : tbody.children[rowIndex-1];
+  if(!targetRow) return;
+  var targetCell=targetRow.children[cellIndex];
+  if(!targetCell) return;
+  var targetInput=targetCell.querySelector('input');
+  if(targetInput){
+    e.preventDefault();
+    targetInput.focus();
+    if(targetInput.select) targetInput.select();
+  }
+});
+
+// ===== Init =====
+document.getElementById('day-pick').value=today();
+renderAll();
+setInterval(saveData, 60000); // حفظ احتياطي كل دقيقة
+</script>
+</body>
+</html>
