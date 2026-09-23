@@ -119,6 +119,9 @@ tr:hover td{background:rgba(255,255,255,.02);}
     <input type="password" id="login-pass" placeholder="الباسورد" style="width:100%;margin-bottom:12px;" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin();">
     <button class="btn btn-acc" style="width:100%;" onclick="doLogin()">دخول</button>
     <div id="login-err" style="color:var(--red);font-size:12px;margin-top:10px;text-align:center;"></div>
+    <div style="text-align:center;margin-top:12px;">
+      <span style="color:var(--txt2);font-size:12px;cursor:pointer;text-decoration:underline;" onclick="forgotPassword()">نسيت الباسورد؟</span>
+    </div>
     <div id="login-loading" style="color:var(--txt2);font-size:12px;margin-top:10px;text-align:center;display:none;">...بيتم التحقق</div>
   </div>
 </div>
@@ -479,9 +482,34 @@ tr:hover td{background:rgba(255,255,255,.02);}
       <div class="card-title">🗓️ يوم التصفية</div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px;">
         <button class="btn btn-sm" onclick="shiftSettleDay(-1)">◀ يوم قبل</button>
-        <input type="date" id="settle-day-pick" onchange="renderSettleDay()">
+        <input type="date" id="settle-day-pick" onchange="renderSettleDay();renderCashDrawer();">
         <button class="btn btn-sm" onclick="shiftSettleDay(1)">يوم بعد ▶</button>
-        <button class="btn btn-sm btn-acc" onclick="document.getElementById('settle-day-pick').value=today();renderSettleDay();">النهارده</button>
+        <button class="btn btn-sm btn-acc" onclick="document.getElementById('settle-day-pick').value=today();renderSettleDay();renderCashDrawer();">النهارده</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💰 درج الكاش اليومي</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+        <span style="font-size:12px;color:var(--txt2);">الرصيد الافتتاحي (اللي سيبته للي هيقعد مكانك)</span>
+        <input id="cd-opening" type="number" placeholder="0" style="max-width:130px;" onchange="setCashDrawerOpening(this.value)">
+      </div>
+      <button class="btn btn-acc" onclick="addCashDrawerRow()" style="margin-bottom:12px;">+ إضافة صف</button>
+      <div class="twrap">
+        <table><thead><tr>
+          <th>وارد</th><th>خروج</th><th>ملاحظة</th><th>الباقي</th><th></th>
+        </tr></thead><tbody id="cd-tb"></tbody></table>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-top:12px;border-top:1px solid var(--bord);padding-top:12px;">
+        <div style="text-align:center;">
+          <div style="font-size:11px;color:var(--txt2);">المفروض يكون موجود</div>
+          <div id="cd-expected" style="font-size:19px;font-weight:700;color:var(--acc);">0ج</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="font-size:12px;color:var(--txt2);">اللي لقيته فعليًا</span>
+          <input id="cd-actual" type="number" placeholder="0" style="max-width:120px;" oninput="checkCashDrawerDiff()">
+        </div>
+        <div id="cd-diff" style="font-size:14px;font-weight:700;"></div>
       </div>
     </div>
 
@@ -838,6 +866,19 @@ function doLogin(){
     err.textContent='الإيميل أو الباسورد غلط';
   });
 }
+function forgotPassword(){
+  var email=(document.getElementById('login-email').value||'').trim();
+  var err=document.getElementById('login-err');
+  err.textContent='';
+  if(!email){ err.textContent='اكتب إيميلك الأول فوق، بعدين دوس "نسيت الباسورد"'; err.style.color='var(--amber)'; return; }
+  auth.sendPasswordResetEmail(email).then(function(){
+    err.style.color='var(--green)';
+    err.textContent='بعتنالك رابط لإيميلك، افتحه واعمل باسورد جديد ✓';
+  }).catch(function(e){
+    err.style.color='var(--red)';
+    err.textContent='مقدرناش نبعت الإيميل - تأكد إن الإيميل صح';
+  });
+}
 function doLogout(){
   if(!confirm('تخرج من البرنامج؟'))return;
   auth.signOut();
@@ -864,6 +905,8 @@ function cloudPullOnce(){
       D.settlements=cloud.settlements||[];
       D.wallet=cloud.wallet||[];
       D.invoices=cloud.invoices||[];
+      D.cashDrawer=cloud.cashDrawer||[];
+      D.cashDrawerOpening=cloud.cashDrawerOpening||{};
       D.settings=Object.assign({},D.settings,cloud.settings||{});
       suppressCloudPush=true;
       saveData();
@@ -890,7 +933,7 @@ function cloudPush(){
   if(!ref)return;
   var payload={
     orders:D.orders,customers:D.customers,riders:D.riders,complaints:D.complaints,
-    streets:D.streets,extraCats:D.extraCats,settlements:D.settlements,wallet:D.wallet,invoices:D.invoices,
+    streets:D.streets,extraCats:D.extraCats,settlements:D.settlements,wallet:D.wallet,invoices:D.invoices,cashDrawer:D.cashDrawer,cashDrawerOpening:D.cashDrawerOpening,
     settings:D.settings,updatedAt:new Date().toISOString()
   };
   ref.set(payload).then(function(){
@@ -933,7 +976,7 @@ auth.onAuthStateChanged(function(user){
 });
 
 // ===== Data =====
-let D={orders:[],customers:{},riders:[],complaints:[],streets:[],extraCats:[],settlements:[],wallet:[],invoices:[],settings:{fee1:20,fee2:25,fee3:30,fee4:35,feeOut:40}};
+let D={orders:[],customers:{},riders:[],complaints:[],streets:[],extraCats:[],settlements:[],wallet:[],invoices:[],cashDrawer:[],cashDrawerOpening:{},settings:{fee1:20,fee2:25,fee3:30,fee4:35,feeOut:40}};
 var DEFAULT_CATS=['فرد','مطعم','أونلاين','شواية','محل','معمل','صيدلية'];
 function getAllCats(){var r=DEFAULT_CATS.slice();D.extraCats.forEach(function(c){if(DEFAULT_CATS.indexOf(c)<0)r.push(c);});return r;}
 
@@ -944,6 +987,8 @@ function loadData(){
   try{D.settlements=JSON.parse(localStorage.getItem('fk6_settlements')||'[]');}catch(e){D.settlements=[];}
   try{D.wallet=JSON.parse(localStorage.getItem('fk6_wallet')||'[]');}catch(e){D.wallet=[];}
   try{D.invoices=JSON.parse(localStorage.getItem('fk6_invoices')||'[]');}catch(e){D.invoices=[];}
+  try{D.cashDrawer=JSON.parse(localStorage.getItem('fk6_cashdrawer')||'[]');}catch(e){D.cashDrawer=[];}
+  try{D.cashDrawerOpening=JSON.parse(localStorage.getItem('fk6_cashdrawer_opening')||'{}');}catch(e){D.cashDrawerOpening={};}
   try{D.complaints=JSON.parse(localStorage.getItem('fk6_complaints')||'[]');}catch(e){D.complaints=[];}
   try{D.extraCats=JSON.parse(localStorage.getItem('fk6_excats')||'[]');}catch(e){D.extraCats=[];}
   try{D.streets=JSON.parse(localStorage.getItem('fk6_streets')||'["تريان","المركز","حامول العرب","حامول السعيد","السلاهيب","الجامع","أوسكر","الحلافي","المستشفى","وسط البلد","المرور","أبو منصور"]');}catch(e){D.streets=[];}
@@ -956,6 +1001,8 @@ function saveData(){
   localStorage.setItem('fk6_settlements',JSON.stringify(D.settlements));
   localStorage.setItem('fk6_wallet',JSON.stringify(D.wallet));
   localStorage.setItem('fk6_invoices',JSON.stringify(D.invoices));
+  localStorage.setItem('fk6_cashdrawer',JSON.stringify(D.cashDrawer));
+  localStorage.setItem('fk6_cashdrawer_opening',JSON.stringify(D.cashDrawerOpening));
   localStorage.setItem('fk6_complaints',JSON.stringify(D.complaints));
   localStorage.setItem('fk6_streets',JSON.stringify(D.streets));
   localStorage.setItem('fk6_excats',JSON.stringify(D.extraCats));
@@ -1110,6 +1157,46 @@ function autocheckCell(i){
     chk.checked=false;
     wrap.classList.remove('selected');
   }
+  scheduleAutoLogCell(i);
+}
+
+// ===== تسجيل فوري للأوردر في السجل لحظة الكتابة، حتى لو اتمسحت الخلية بعد كده =====
+var cellAutoTimer={};
+var cellDraftId={};
+function scheduleAutoLogCell(i){
+  clearTimeout(cellAutoTimer[i]);
+  cellAutoTimer[i]=setTimeout(function(){ autoLogCell(i); }, 1000);
+}
+function autoLogCell(i){
+  const el=document.getElementById('cell-'+i);
+  if(!el)return;
+  const v=(el.value||'').trim();
+  if(!v){
+    // اتمسحت الخلية - الأوردر اللي كان مسجل فيها فاضل زي ما هو، وبس نجهزها لأوردر جديد لو اتكتب فيها تاني
+    cellDraftId[i]=null;
+    return;
+  }
+  const phone=extractPhone(v);
+  if(!phone)return; // مفيش رقم واضح لسه، منسجلش حاجة ناقصة
+  const name=extractName(v);
+  const address=extractAddress(v);
+  const defFee=(D.settings&&D.settings.fee1)?D.settings.fee1:20;
+  const draftId=cellDraftId[i];
+  if(draftId){
+    const existing=D.orders.find(o=>o.id===draftId);
+    if(existing){
+      existing.phone=phone;
+      existing.name=name||existing.name;
+      existing.address=address||existing.address;
+      existing.text=v.slice(0,150);
+      saveData();
+      return;
+    }
+  }
+  const newId=Date.now()+'_'+Math.random().toString(36).slice(2,8);
+  D.orders.push({id:newId,phone,name:name||'',address:address||'',text:v.slice(0,150),fee:defFee,cat:'فرد',rider:'',date:today(),ts:new Date().toISOString()});
+  cellDraftId[i]=newId;
+  saveData();
 }
 
 function toggleCellSelect(i){
@@ -1126,6 +1213,8 @@ function clearOneCell(i){
   if(chk)chk.checked=false;
   if(wrap)wrap.classList.remove('selected');
   if(i>=TIMER_CELL_START && i<=TIMER_CELL_END) cancelCellTimer(i);
+  clearTimeout(cellAutoTimer[i]);
+  cellDraftId[i]=null;
   saveCells();
 }
 
@@ -1448,7 +1537,16 @@ function confirmOne(i){
     oDate=rd2.getFullYear()+'-'+String(rd2.getMonth()+1).padStart(2,'0')+'-'+String(rd2.getDate()).padStart(2,'0');
     clearChatTime(o.phone);
   }
-  D.orders.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,8),phone:o.phone,name,address,text:o.text.slice(0,150),fee,cat,rider:o.rider||'',date:oDate,ts:oTs});
+  var draftId=(o.idx!=null)?cellDraftId[o.idx]:null;
+  var existing=draftId?D.orders.find(x=>x.id===draftId):null;
+  if(existing){
+    existing.phone=o.phone; existing.name=name; existing.address=address;
+    existing.text=o.text.slice(0,150); existing.fee=fee; existing.cat=cat;
+    existing.rider=o.rider||''; existing.date=oDate; existing.ts=oTs;
+  }else{
+    D.orders.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,8),phone:o.phone,name,address,text:o.text.slice(0,150),fee,cat,rider:o.rider||'',date:oDate,ts:oTs});
+  }
+  if(o.idx!=null)cellDraftId[o.idx]=null;
   saveData();
 
   const card=document.getElementById('ocard-'+i);
@@ -2016,6 +2114,7 @@ function renderSettleGate(){
     renderSettleDay();
     renderSettleMonth();
     renderWallet();
+    renderCashDrawer();
   }else{
     lockEl.style.display='block';
     contentEl.style.display='none';
@@ -2189,6 +2288,105 @@ function renderSettleDay(){
     <td colspan="5"></td>
   </tr>`;
   tb.innerHTML=html;
+}
+
+// ===== درج الكاش اليومي =====
+function setCashDrawerOpening(val){
+  var dayEl=document.getElementById('settle-day-pick');
+  var d=(dayEl&&dayEl.value)||today();
+  D.cashDrawerOpening[d]=parseFloat(val)||0;
+  saveData();
+  renderCashDrawer();
+}
+function addCashDrawerRow(){
+  var dayEl=document.getElementById('settle-day-pick');
+  var d=(dayEl&&dayEl.value)||today();
+  D.cashDrawer.push({id:Date.now()+'_'+Math.random().toString(36).slice(2,6),date:d,in:0,out:0,note:'',createdAt:new Date().toISOString()});
+  saveData();
+  renderCashDrawer();
+}
+function updateCashDrawerCell(id,field,val){
+  var entry=D.cashDrawer.find(x=>x.id===id);
+  if(!entry)return;
+  if(field==='note') entry.note=val;
+  else entry[field]=parseFloat(val)||0;
+  saveData();
+  recalcCashDrawerBalances();
+}
+function deleteCashDrawerEntry(id){
+  if(!confirm('تمسح الصف ده؟'))return;
+  D.cashDrawer=D.cashDrawer.filter(x=>x.id!==id);
+  saveData();
+  renderCashDrawer();
+}
+function checkCashDrawerDiff(){
+  var expEl=document.getElementById('cd-expected');
+  var diffEl=document.getElementById('cd-diff');
+  var actualEl=document.getElementById('cd-actual');
+  if(!expEl||!diffEl||!actualEl)return;
+  var expected=parseFloat(expEl.dataset.val)||0;
+  var actual=actualEl.value===''?null:(parseFloat(actualEl.value)||0);
+  if(actual===null){ diffEl.textContent=''; return; }
+  var diff=actual-expected;
+  if(diff===0){
+    diffEl.style.color='var(--green)';
+    diffEl.textContent='✅ مطابق تمامًا';
+  }else if(diff>0){
+    diffEl.style.color='var(--blue)';
+    diffEl.textContent='زيادة '+diff+'ج';
+  }else{
+    diffEl.style.color='var(--red)';
+    diffEl.textContent='⚠️ ناقص '+Math.abs(diff)+'ج';
+  }
+}
+function recalcCashDrawerBalances(){
+  var dayEl=document.getElementById('settle-day-pick');
+  var expEl=document.getElementById('cd-expected');
+  var tb=document.getElementById('cd-tb');
+  if(!dayEl||!expEl||!tb)return;
+  var d=dayEl.value||today();
+  var opening=D.cashDrawerOpening[d]||0;
+  var running=opening;
+  tb.querySelectorAll('tr[data-id]').forEach(function(tr){
+    var id=tr.getAttribute('data-id');
+    var entry=D.cashDrawer.find(x=>x.id===id);
+    if(!entry)return;
+    running += (entry.in||0)-(entry.out||0);
+    var balCell=tr.querySelector('.cd-balance-cell');
+    if(balCell) balCell.textContent=running+'ج';
+  });
+  expEl.textContent=running+'ج';
+  expEl.dataset.val=running;
+  checkCashDrawerDiff();
+}
+function renderCashDrawer(){
+  var dayEl=document.getElementById('settle-day-pick');
+  var tb=document.getElementById('cd-tb');
+  var openingEl=document.getElementById('cd-opening');
+  var expEl=document.getElementById('cd-expected');
+  if(!dayEl||!tb||!openingEl||!expEl)return;
+  var d=dayEl.value||today();
+  var opening=D.cashDrawerOpening[d]||0;
+  openingEl.value=opening||'';
+  var rows=D.cashDrawer.filter(x=>x.date===d);
+  var running=opening;
+  if(!rows.length){
+    tb.innerHTML='<tr><td colspan="5" class="empty">لسه مفيش صفوف — دوس "+ إضافة صف"</td></tr>';
+  }else{
+    tb.innerHTML=rows.map(function(x){
+      running += (x.in||0)-(x.out||0);
+      return `<tr data-id="${x.id}">
+        <td><input type="number" value="${x.in||''}" placeholder="0" style="width:90px;color:var(--green);font-weight:700;" oninput="updateCashDrawerCell('${x.id}','in',this.value)"></td>
+        <td><input type="number" value="${x.out||''}" placeholder="0" style="width:90px;color:var(--red);font-weight:700;" oninput="updateCashDrawerCell('${x.id}','out',this.value)"></td>
+        <td><input type="text" value="${x.note||''}" placeholder="ملاحظة" style="width:150px;" oninput="updateCashDrawerCell('${x.id}','note',this.value)"></td>
+        <td class="cd-balance-cell" style="font-weight:700;">${running}ج</td>
+        <td><button class="btn btn-sm btn-red" onclick="deleteCashDrawerEntry('${x.id}')">حذف</button></td>
+      </tr>`;
+    }).join('');
+  }
+  expEl.textContent=running+'ج';
+  expEl.dataset.val=running;
+  checkCashDrawerDiff();
 }
 
 function renderSettleMonth(){
