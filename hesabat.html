@@ -68,14 +68,50 @@ td input{width:85px;text-align:center;}
   <div class="logo">📒 حسابات اليومية <small>درج الكاش، تصفية المناديب، والمحفظة</small></div>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
     <button class="btn btn-sm" onclick="shiftDay(-1)">◀ يوم قبل</button>
-    <input type="date" id="day-pick" onchange="renderAll()">
+    <input type="date" id="day-pick" autocomplete="off" onchange="renderAll()">
     <button class="btn btn-sm" onclick="shiftDay(1)">يوم بعد ▶</button>
     <button class="btn btn-sm btn-acc" onclick="document.getElementById('day-pick').value=today();renderAll();">النهارده</button>
+    <button class="btn btn-sm" onclick="openSettleReport()">📊 تقرير التصفيات</button>
     <span id="sync-status" style="font-size:11px;color:var(--txt2);white-space:nowrap;">☁️ ...</span>
     <button class="btn btn-sm" onclick="doLogout()">خروج</button>
   </div>
 </div>
 <div id="app-day-hint" style="display:none;text-align:center;font-size:11px;color:var(--txt2);padding:4px 16px;">💡 غيّر التاريخ فوق لأي يوم جديد وهيفتحلك صفحة فاضية تلقائي لبياناته</div>
+
+<!-- ===== تقرير التصفيات (صفحة لوحدها محمية بباسورد) ===== -->
+<div id="settle-report-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:600;padding:20px;overflow-y:auto;">
+  <div style="max-width:480px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-weight:800;font-size:17px;color:var(--acc);">📊 تقرير التصفيات</div>
+      <button class="btn btn-sm" onclick="closeSettleReport()">✖ قفل</button>
+    </div>
+
+    <div class="card" id="settle-report-lock">
+      <div class="card-title" id="settle-report-pass-title">🔒 الصفحة محمية بباسورد</div>
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:10px;" id="settle-report-pass-hint"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <input type="text" id="settle-report-pass-input" placeholder="اكتب الباسورد" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" name="srp_field_x" style="max-width:160px;-webkit-text-security:disc;text-security:disc;" onkeydown="if(event.key==='Enter')checkSettleReportPassword();">
+        <button class="btn btn-acc" onclick="checkSettleReportPassword()">دخول</button>
+      </div>
+      <div id="settle-report-pass-err" style="color:var(--red);font-size:11px;margin-top:8px;"></div>
+    </div>
+
+    <div id="settle-report-content" style="display:none;">
+      <div style="display:flex;justify-content:flex-end;gap:6px;margin-bottom:10px;">
+        <button class="btn btn-sm" onclick="changeSettleReportPassword()">🔑 تغيير الباسورد</button>
+      </div>
+      <div class="card">
+        <div class="card-title">الإجمالي يوم بيوم</div>
+        <div class="twrap">
+          <table><thead><tr><th>اليوم</th><th>إجمالي التصفية</th></tr></thead><tbody id="settle-report-tb"></tbody></table>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="n" id="settle-report-grand" style="color:var(--green);">0</div><div class="l">إجمالي كل التصفيات (تراكمي من أول ما بدأنا)</div></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="main" id="app-main" style="display:none;">
 
@@ -239,6 +275,7 @@ function cloudPullOnce(){
       D.riderRows=cloud.riderRows||[];
       D.walletRows=cloud.walletRows||[];
       D.debts=cloud.debts||[];
+      D.settleReportPass=cloud.settleReportPass||D.settleReportPass||'';
       suppressCloudPush=true;
       saveData();
       renderAll();
@@ -263,7 +300,8 @@ function cloudPush(){
   if(!ref)return;
   var payload={
     cashRows:D.cashRows,cashOpening:D.cashOpening,riderRows:D.riderRows,
-    walletRows:D.walletRows,debts:D.debts,updatedAt:new Date().toISOString()
+    walletRows:D.walletRows,debts:D.debts,settleReportPass:D.settleReportPass,
+    updatedAt:new Date().toISOString()
   };
   ref.set(payload).then(function(){
     setSyncStatus('☁️ متزامن');
@@ -297,13 +335,14 @@ auth.onAuthStateChanged(function(user){
 });
 
 // ===== Data =====
-let D={cashRows:[], cashOpening:{}, riderRows:[], walletRows:[], debts:[]};
+let D={cashRows:[], cashOpening:{}, riderRows:[], walletRows:[], debts:[], settleReportPass:''};
 function loadData(){
   try{D.cashRows=JSON.parse(localStorage.getItem('hs_cash')||'[]');}catch(e){D.cashRows=[];}
   try{D.cashOpening=JSON.parse(localStorage.getItem('hs_cash_opening')||'{}');}catch(e){D.cashOpening={};}
   try{D.riderRows=JSON.parse(localStorage.getItem('hs_riders')||'[]');}catch(e){D.riderRows=[];}
   try{D.walletRows=JSON.parse(localStorage.getItem('hs_wallet')||'[]');}catch(e){D.walletRows=[];}
   try{D.debts=JSON.parse(localStorage.getItem('hs_debts')||'[]');}catch(e){D.debts=[];}
+  D.settleReportPass=localStorage.getItem('hs_settle_report_pass')||'';
 }
 function saveData(){
   localStorage.setItem('hs_cash',JSON.stringify(D.cashRows));
@@ -311,6 +350,7 @@ function saveData(){
   localStorage.setItem('hs_riders',JSON.stringify(D.riderRows));
   localStorage.setItem('hs_wallet',JSON.stringify(D.walletRows));
   localStorage.setItem('hs_debts',JSON.stringify(D.debts));
+  localStorage.setItem('hs_settle_report_pass',D.settleReportPass||'');
   scheduleCloudPush();
 }
 loadData();
@@ -524,6 +564,75 @@ function renderUnsettledRiders(){
   }).join('');
 }
 
+// ===== تقرير التصفيات (صفحة لوحدها محمية بباسورد) =====
+function openSettleReport(){
+  document.getElementById('settle-report-overlay').style.display='block';
+  var hasPass=!!(D.settleReportPass);
+  document.getElementById('settle-report-pass-title').textContent=hasPass?'🔒 الصفحة محمية بباسورد':'🔒 اعمل باسورد لحماية الصفحة';
+  document.getElementById('settle-report-pass-hint').textContent=hasPass?'':'أول مرة هنا - اللي هتكتبه دلوقتي هيبقى الباسورد بتاعك';
+  document.getElementById('settle-report-pass-input').value='';
+  document.getElementById('settle-report-pass-err').textContent='';
+  document.getElementById('settle-report-lock').style.display='block';
+  document.getElementById('settle-report-content').style.display='none';
+}
+function closeSettleReport(){
+  document.getElementById('settle-report-overlay').style.display='none';
+}
+function checkSettleReportPassword(){
+  var input=(document.getElementById('settle-report-pass-input').value||'');
+  var err=document.getElementById('settle-report-pass-err');
+  err.textContent='';
+  if(!D.settleReportPass){
+    if(!input){ err.textContent='اكتب باسورد الأول'; return; }
+    D.settleReportPass=input;
+    saveData();
+    document.getElementById('settle-report-lock').style.display='none';
+    document.getElementById('settle-report-content').style.display='block';
+    renderSettleReport();
+    toast('تم حفظ الباسورد ✓');
+    return;
+  }
+  if(input===D.settleReportPass){
+    document.getElementById('settle-report-lock').style.display='none';
+    document.getElementById('settle-report-content').style.display='block';
+    document.getElementById('settle-report-pass-input').value='';
+    renderSettleReport();
+  }else{
+    err.textContent='الباسورد غلط';
+  }
+}
+function changeSettleReportPassword(){
+  var oldP=prompt('اكتب الباسورد الحالي:');
+  if(oldP===null)return;
+  if(oldP!==(D.settleReportPass||'')){toast('الباسورد الحالي غلط','var(--red)');return;}
+  var newP=prompt('اكتب الباسورد الجديد:');
+  if(!newP)return;
+  D.settleReportPass=newP;
+  saveData();
+  toast('تم تغيير الباسورد ✓');
+}
+function renderSettleReport(){
+  var byDate={};
+  D.riderRows.forEach(function(x){
+    if(!x.date)return;
+    var v=parseFloat(x.cashCount)||0;
+    if(!v)return;
+    byDate[x.date]=(byDate[x.date]||0)+v;
+  });
+  var dates=Object.keys(byDate).sort(function(a,b){return b.localeCompare(a);});
+  var tb=document.getElementById('settle-report-tb');
+  if(!dates.length){
+    tb.innerHTML='<tr><td colspan="2" class="empty">لسه مفيش تصفيات متسجلة</td></tr>';
+  }else{
+    tb.innerHTML=dates.map(function(d){
+      return '<tr><td>'+d+'</td><td style="font-weight:700;color:var(--acc);">'+byDate[d]+'</td></tr>';
+    }).join('');
+  }
+  var grand=0;
+  dates.forEach(function(d){ grand+=byDate[d]; });
+  document.getElementById('settle-report-grand').textContent=grand;
+}
+
 // ===== ديون على الناس (ثابتة، مش مرتبطة بيوم معين) =====
 function addDebt(){
   var name=(document.getElementById('debt-name').value||'').trim();
@@ -717,6 +826,12 @@ document.addEventListener('keydown', function(e){
 document.getElementById('day-pick').value=today();
 renderAll();
 setInterval(saveData, 60000); // حفظ احتياطي كل دقيقة
+// المتصفح بيحاول يرجع آخر تاريخ كان متكتوب في الخانة (حتى لو من زيارة قبل كده)،
+// فبنفرض النهارده الصحيح كل ما الصفحة تفتح أو ترجع من الكاش، من غير ما نلمس أي بيانات محفوظة
+window.addEventListener('pageshow', function(){
+  var el=document.getElementById('day-pick');
+  if(el && el.value!==today()){ el.value=today(); renderAll(); }
+});
 </script>
 </body>
 </html>
