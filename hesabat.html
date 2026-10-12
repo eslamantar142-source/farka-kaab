@@ -72,6 +72,8 @@ td input{width:85px;text-align:center;}
     <button class="btn btn-sm" onclick="shiftDay(1)">يوم بعد ▶</button>
     <button class="btn btn-sm btn-acc" onclick="document.getElementById('day-pick').value=today();renderAll();">النهارده</button>
     <button class="btn btn-sm" onclick="openSettleReport()">📊 تقرير التصفيات</button>
+    <button class="btn btn-sm" onclick="exportData()">📥 نسخة احتياطية</button>
+    <label class="btn btn-sm" style="cursor:pointer;">📤 استعادة<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
     <span id="sync-status" style="font-size:11px;color:var(--txt2);white-space:nowrap;">☁️ ...</span>
     <button class="btn btn-sm" onclick="doLogout()">خروج</button>
   </div>
@@ -562,6 +564,33 @@ function renderUnsettledRiders(){
       <button class="btn btn-sm btn-red" onclick="deleteRiderRow('${x.id}')">مسح</button>
     </div>`;
   }).join('');
+}
+
+// ===== نسخة احتياطية (تصدير/استيراد JSON) =====
+function exportData(){
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='حسابات_اليومية_بيانات_'+today()+'.json';
+  a.click();
+  toast('تم تحميل النسخة الاحتياطية ✓');
+}
+function importData(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const imp=JSON.parse(ev.target.result);
+      if(!confirm('هتستبدل كل البيانات الحالية ببيانات الملف ده. متأكد؟'))return;
+      D={...D,...imp};
+      saveData();
+      renderAll();
+      toast('تم استعادة البيانات ✓');
+    }catch(err){ toast('ملف غلط!','var(--red)'); }
+  };
+  reader.readAsText(file);
+  e.target.value='';
 }
 
 // ===== تقرير التصفيات (صفحة لوحدها محمية بباسورد) =====
