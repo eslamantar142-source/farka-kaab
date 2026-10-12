@@ -584,9 +584,17 @@ function importData(e){
       const imp=JSON.parse(ev.target.result);
       if(!confirm('هتستبدل كل البيانات الحالية ببيانات الملف ده. متأكد؟'))return;
       D={...D,...imp};
-      saveData();
+      localStorage.setItem('hs_cash',JSON.stringify(D.cashRows));
+      localStorage.setItem('hs_cash_opening',JSON.stringify(D.cashOpening));
+      localStorage.setItem('hs_riders',JSON.stringify(D.riderRows));
+      localStorage.setItem('hs_wallet',JSON.stringify(D.walletRows));
+      localStorage.setItem('hs_debts',JSON.stringify(D.debts));
+      localStorage.setItem('hs_settle_report_pass',D.settleReportPass||'');
       renderAll();
-      toast('تم استعادة البيانات ✓');
+      // بنرفع على السحابة فورًا من غير تأخير، عشان لو قفلت الصفحة بسرعة ماتضيعش الاستعادة
+      clearTimeout(cloudPushTimer);
+      toast('⏳ بيترفع على السحابة.. متقفلش الصفحة لحد ما يظهر "☁️ متزامن"');
+      if(auth.currentUser){ cloudPush(); }
     }catch(err){ toast('ملف غلط!','var(--red)'); }
   };
   reader.readAsText(file);
